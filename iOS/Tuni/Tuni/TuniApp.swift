@@ -11,7 +11,7 @@ import SwiftUI
 struct TuniApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TuniView()
         }
     }
 }

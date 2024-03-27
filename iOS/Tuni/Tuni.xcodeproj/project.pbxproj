@@ -8,22 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		94A96BF22BB394470042E111 /* TuniApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A96BF12BB394470042E111 /* TuniApp.swift */; };
-		94A96BF42BB394470042E111 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A96BF32BB394470042E111 /* ContentView.swift */; };
+		94A96BF42BB394470042E111 /* TuniView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A96BF32BB394470042E111 /* TuniView.swift */; };
 		94A96BF62BB394490042E111 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94A96BF52BB394490042E111 /* Assets.xcassets */; };
 		94A96BF92BB394490042E111 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94A96BF82BB394490042E111 /* Preview Assets.xcassets */; };
 		94A96C012BB394C70042E111 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 94A96C002BB394C70042E111 /* AudioKit */; };
 		94A96C032BB3956F0042E111 /* Tuni.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A96C022BB3956F0042E111 /* Tuni.swift */; };
 		94A96C092BB398EA0042E111 /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 94A96C082BB398EA0042E111 /* AudioKitEX */; };
 		94A96C0C2BB399200042E111 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 94A96C0B2BB399200042E111 /* SoundpipeAudioKit */; };
+		94A96C0E2BB3A0D30042E111 /* GradientSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A96C0D2BB3A0D30042E111 /* GradientSlider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		94A96BEE2BB394470042E111 /* Tuni.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tuni.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94A96BF12BB394470042E111 /* TuniApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuniApp.swift; sourceTree = "<group>"; };
-		94A96BF32BB394470042E111 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		94A96BF32BB394470042E111 /* TuniView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuniView.swift; sourceTree = "<group>"; };
 		94A96BF52BB394490042E111 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		94A96BF82BB394490042E111 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		94A96C022BB3956F0042E111 /* Tuni.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tuni.swift; sourceTree = "<group>"; };
+		94A96C0D2BB3A0D30042E111 /* GradientSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientSlider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +62,8 @@
 			isa = PBXGroup;
 			children = (
 				94A96BF12BB394470042E111 /* TuniApp.swift */,
-				94A96BF32BB394470042E111 /* ContentView.swift */,
+				94A96BF32BB394470042E111 /* TuniView.swift */,
+				94A96C0D2BB3A0D30042E111 /* GradientSlider.swift */,
 				94A96BF52BB394490042E111 /* Assets.xcassets */,
 				94A96BF72BB394490042E111 /* Preview Content */,
 				94A96C022BB3956F0042E111 /* Tuni.swift */,
@@ -156,7 +159,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94A96BF42BB394470042E111 /* ContentView.swift in Sources */,
+				94A96C0E2BB3A0D30042E111 /* GradientSlider.swift in Sources */,
+				94A96BF42BB394470042E111 /* TuniView.swift in Sources */,
 				94A96C032BB3956F0042E111 /* Tuni.swift in Sources */,
 				94A96BF22BB394470042E111 /* TuniApp.swift in Sources */,
 			);

@@ -4,6 +4,9 @@
 //
 //  Created by Prarthana Gajjala on 3/26/24.
 //
+//  Code modified from AudioKit Cookbook
+//  https://github.com/AudioKit/Cookbook
+//
 
 import Foundation
 import AudioKit
@@ -12,6 +15,7 @@ import SoundpipeAudioKit
 
 struct TunerData {
     var pitch: Float = 0.0
+    var frequency: Float = 0.0
     var amplitude: Float = 0.0
     var noteNameWithSharps = "-"
     var noteNameWithFlats = "-"
@@ -20,6 +24,9 @@ struct TunerData {
 
 class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
     @Published var data = TunerData()
+    
+    var desiredTone: Int = 1
+    
     let engine = AudioEngine()
     let initialDevice: Device
     
@@ -34,8 +41,11 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
     let noteNamesWithSharps = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"]
     let noteNamesWithFlats = ["C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B♭", "B"]
     
+    let lowB: Float = 15.435
+    let highC: Float = 32.7
+    
     override init() {
-        print("initting")
+        print("Instantiating TunerConductor Object")
         guard let input = engine.input else { fatalError() }
 
         guard let device = engine.inputDevice else { fatalError() }
@@ -61,9 +71,7 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
     
     func update(_ pitch: AUValue, _ amp: AUValue) {
         // Reduces sensitivity to background noise to prevent random / fluctuating data.
-        print("update called")
         guard amp > 0.1 else {
-            print("EARLY RETURN :(((((((((")
             return
         }
 
@@ -77,6 +85,10 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
         while frequency < Float(noteFrequencies[0]) {
             frequency *= 2.0
         }
+        data.frequency = convertOutOfBounds(val: frequency)
+        
+        print("FREQUENCY: ", data.frequency)
+        print("PITCH: ", data.pitch)
 
         var minDistance: Float = 10000.0
         var index = 0
@@ -92,5 +104,16 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
         data.noteNameWithSharps = "\(noteNamesWithSharps[index])\(octave)"
         data.noteNameWithFlats = "\(noteNamesWithFlats[index])\(octave)"
         print("NOTE WITH FLATS: ", data.noteNameWithFlats)
+    }
+    
+    func convertOutOfBounds(val: Float) -> Float {
+        var toRet: Float = val
+        if val > highB {
+            toRet = lowB + (val - highB)/(highC - highB) * (lowC - lowB)
+        }
+        else if (val < lowC) {
+            toRet = highB + (lowC - val)/(lowC - lowB) * (highC - highB)
+        }
+        return toRet
     }
 }
