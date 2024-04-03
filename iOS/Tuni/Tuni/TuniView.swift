@@ -26,7 +26,6 @@ struct TuniView: View {
                    step: 0.25)
             .frame(width:360)
             .overlay(
-                
                 HStack{
                     ForEach(1..<12) { i in
                         Rectangle().frame(width: 2, height: 30)
@@ -34,7 +33,6 @@ struct TuniView: View {
                     }
                     Rectangle().frame(width: 2, height: 30)
                 }.frame(width: 360)
-            
             )
             
             HStack{
@@ -46,18 +44,22 @@ struct TuniView: View {
                     .frame(width: 25)
             }.frame(width: 360)
             
-           
-            
-            
             Spacer()
                 .frame(height: 50)
-            if(tuni.data.frequency != -1) {
-                Slider(value: $tuni.data.frequency,
-                       in: tuni.desiredTone / NOTE_RATIO ... tuni.desiredTone * NOTE_RATIO)
-            } else {
-                Slider(value: $tuni.desiredTone,
-                       in: tuni.desiredTone / NOTE_RATIO ... tuni.desiredTone * NOTE_RATIO)
-            }
+            
+            // when no sound is picked up, thumb will default to the center of the slider
+            let sliderVal = tuni.data.frequency != -1 ? $tuni.data.frequency : $tuni.desiredTone
+            
+            Slider(value: sliderVal,
+                   in: tuni.desiredTone / NOTE_RATIO ... tuni.desiredTone * NOTE_RATIO)
+            .overlay(
+                VStack{
+                    Rectangle()
+                        .frame(width: 2, height: 30)
+                    Text(String(tuni.desiredTone))
+                }
+                    .offset(x: -5.5, y: 13) // exact positioning of ticker & text
+            )
             
         }
         .onAppear {
