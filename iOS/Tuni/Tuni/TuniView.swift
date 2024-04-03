@@ -19,21 +19,26 @@ struct TuniView: View {
     
     var body: some View {
         VStack {
-            Text(tuni.data.noteNameWithSharps)
+            Text(tuni.data.noteNameWithSharps) // either "-" or current note
             
-            Slider(value: $tuni.desiredTick,
-                   in: 0 ... 11,
-                   step: 0.25)
-            .frame(width:360)
-            .overlay(
+            ZStack {
                 HStack{
                     ForEach(1..<12) { i in
-                        Rectangle().frame(width: 2, height: 30)
+                        Rectangle()
+                            .frame(width: 2, height: 40)
+                            .foregroundColor(.blue)
                         Spacer().frame(width:28)
                     }
-                    Rectangle().frame(width: 2, height: 30)
+                    Rectangle()
+                        .frame(width: 2, height: 40)
+                        .foregroundColor(.blue)
                 }.frame(width: 360)
-            )
+                
+                Slider(value: $tuni.desiredTick,
+                       in: 0 ... 11,
+                       step: 0.25)
+                .frame(width:360)
+            }
             
             HStack{
                 ForEach(0..<11) { i in
@@ -50,16 +55,18 @@ struct TuniView: View {
             // when no sound is picked up, thumb will default to the center of the slider
             let sliderVal = tuni.data.frequency != -1 ? $tuni.data.frequency : $tuni.desiredTone
             
-            Slider(value: sliderVal,
-                   in: tuni.desiredTone / NOTE_RATIO ... tuni.desiredTone * NOTE_RATIO)
-            .overlay(
-                VStack{
+            ZStack {
+                VStack {
                     Rectangle()
-                        .frame(width: 2, height: 30)
+                        .frame(width: 2, height: 40)
+                        .foregroundColor(.blue)
                     Text(String(tuni.desiredTone))
                 }
-                    .offset(x: -5.5, y: 13) // exact positioning of ticker & text
-            )
+                .offset(x: -5.5, y: 13) // exact positioning of ticker & text
+                
+                Slider(value: sliderVal,
+                       in: tuni.desiredTone / NOTE_RATIO ... tuni.desiredTone * NOTE_RATIO)
+            }
             
         }
         .onAppear {
