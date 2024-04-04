@@ -296,7 +296,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Tuni/Preview Content\"";
-				DEVELOPMENT_TEAM = F7CFN67W2A;
+				DEVELOPMENT_TEAM = TU6ZA25FU8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow Tuni to access Microphone";
@@ -326,7 +326,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Tuni/Preview Content\"";
-				DEVELOPMENT_TEAM = F7CFN67W2A;
+				DEVELOPMENT_TEAM = TU6ZA25FU8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow Tuni to access Microphone";
