@@ -57,7 +57,7 @@ struct TuniView: View {
                     Rectangle()
                         .frame(width: 2, height: 40)
                         .foregroundColor(.blue)
-                    Text(String(tuni.desiredTone))
+                    Text(getDesiredToneString(tone:tuni.desiredTone, frequencies:tuni.noteFrequencies, noteNames:tuni.noteNamesWithSharps))
                 }
                 .offset(x: -5.5, y: 13) // exact positioning of ticker & text
                 
@@ -80,6 +80,15 @@ struct TuniView: View {
         }
         .padding()
     }
+}
+
+func getDesiredToneString(tone: Float, frequencies: [Float], noteNames: [String]) -> String {
+    for possibleIndex in 0 ..< frequencies.count {
+        if tone == frequencies[possibleIndex] {
+            return noteNames[possibleIndex]
+        }
+    }
+    return String(format: "%.2f", tone)
 }
 
 //func convertOutOfBounds(val: Float) -> Float {
