@@ -1,0 +1,59 @@
+#:kivy 1.9
+#:import hsv_to_rgb colorsys.hsv_to_rgb
+#:import rgb_to_hsv colorsys.rgb_to_hsv
+
+#:include tuni/controls/gradient_slider.kv
+#:include tuni/controls/lampi_toggle.kv
+#:include tuni/controls/color_box.kv
+#:include tuni/colors.kv
+
+BoxLayout:
+  canvas.before:
+    Color:
+      rgba: offwhite
+    Rectangle:
+      pos: self.pos
+      size: self.size
+  orientation: 'vertical'
+  BoxLayout:
+    orientation: 'vertical'
+    padding: 30
+    size_hint_y: 0.66
+    # hue
+    GradientSlider:
+      id: hue_slider
+      size_hint_y: 0.33
+      colors: red, yellow, green, cyan, blue, magenta, red
+      value: app.hue
+      on_value: app.hue = self.value_normalized
+    # saturation
+    GradientSlider:
+      id: saturation_slider
+      size_hint_y: 0.33
+      colors: white, hsv_to_rgb(app.hue, 1.0, 1.0)
+      value: app.saturation
+      on_value: app.saturation = self.value_normalized
+    # brightness
+    GradientSlider:
+      id: brightness
+      size_hint_y: 0.33
+      colors: (0, 0, 0, 1), (1, 1, 1, 1)
+      thumb_image_light: 'images/brightness_icon_light_small.png'
+      thumb_image_dark: 'images/brightness_icon_dark_small.png'
+      value: app.brightness
+      on_value: app.brightness = self.value_normalized
+  BoxLayout:
+    orientation: 'vertical'
+    size_hint_y: 0.33
+    ColorBox:
+      id: button_hue
+      size_hint_y: 0.1
+      color: hsv_to_rgb(app.hue, app.saturation, 1.0)
+    LampiToggle:
+      id: button_onoff
+      size_hint_y: 0.90
+      image: 'images/power_icon_light.png'
+      accent_color: hsv_to_rgb(hue_slider.value, saturation_slider.value, 1.0)
+      text: ''
+      state: 'down' if app.lamp_is_on else 'normal'
+      on_state:  app.lamp_is_on = True if self.state == 'down' else False
