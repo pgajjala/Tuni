@@ -31,6 +31,11 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
         }
     }
     var desiredTone: Float
+    var namesInSharps: Bool {
+        didSet {
+            currNoteNames = namesInSharps ? noteNamesWithSharps : noteNamesWithFlats
+        }
+    }
     
     let engine = AudioEngine()
     let initialDevice: Device
@@ -45,6 +50,8 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
     let noteFrequencies: [Float] = [16.35, 17.32, 18.35, 19.45, 20.6, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87]
     let noteNamesWithSharps = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"]
     let noteNamesWithFlats = ["C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B♭", "B"]
+    
+    var currNoteNames: [String]
     
     let lowC: Float = 16.35
     let lowB: Float = 15.435
@@ -66,6 +73,9 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
         silence = Fader(tappableNodeC, gain: 0)
         engine.output = silence
         desiredTone = Float(noteFrequencies[Int(floor(desiredTick))]) * pow(1.05,desiredTick - floor(desiredTick))
+        namesInSharps = true
+        
+        currNoteNames = noteNamesWithSharps
         
         super.init()
 

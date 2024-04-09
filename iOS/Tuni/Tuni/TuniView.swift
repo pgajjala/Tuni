@@ -3,6 +3,7 @@
 //  Tuni
 //
 //  Created by Prarthana Gajjala on 3/26/24.
+//  Checkbox code modified from https://sarunw.com/posts/swiftui-checkbox/
 //
 
 import SwiftUI
@@ -19,7 +20,15 @@ struct TuniView: View {
     
     var body: some View {
         VStack {
-            Text(tuni.data.noteNameWithSharps) // either "-" or current note
+            
+            Toggle(isOn: $tuni.namesInSharps) {
+                Text("Express Note Names in Sharps")
+            }.toggleStyle(iOSCheckboxToggleStyle())
+            
+            Spacer()
+                    .frame(height: 50)
+            
+//            Text(tuni.data.noteNameWithSharps) // either "-" or current note
             
             ZStack {
                 HStack{
@@ -42,10 +51,10 @@ struct TuniView: View {
             
             HStack{
                 ForEach(0..<11) { i in
-                    Text(tuni.noteNamesWithSharps[i])
+                    Text(tuni.currNoteNames[i])
                         .frame(width: 22)
                 }
-                Text(tuni.noteNamesWithSharps[11])
+                Text(tuni.currNoteNames[11])
                     .frame(width: 25)
             }.frame(width: 360)
             
@@ -57,7 +66,7 @@ struct TuniView: View {
                     Rectangle()
                         .frame(width: 2, height: 40)
                         .foregroundColor(.blue)
-                    Text(getDesiredToneString(tone:tuni.desiredTone, frequencies:tuni.noteFrequencies, noteNames:tuni.noteNamesWithSharps))
+                    Text(getDesiredToneString(tone:tuni.desiredTone, frequencies:tuni.noteFrequencies, noteNames:tuni.currNoteNames))
                 }
                 .offset(x: -5.5, y: 13) // exact positioning of ticker & text
                 
@@ -70,6 +79,7 @@ struct TuniView: View {
                 .mask(Slider(value: sliderVal, in: tuni.desiredTone / NOTE_RATIO ... tuni.desiredTone * NOTE_RATIO))
                 
             }.frame(height: 100)
+        
             
         }
         .onAppear {
@@ -82,6 +92,25 @@ struct TuniView: View {
     }
 }
 
+struct iOSCheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        // 1
+        Button(action: {
+
+            // 2
+            configuration.isOn.toggle()
+
+        }, label: {
+            HStack {
+                // 3
+                Image(systemName: configuration.isOn ? "checkmark.square" : "square")
+
+                configuration.label
+            }
+        })
+    }
+}
+
 func getDesiredToneString(tone: Float, frequencies: [Float], noteNames: [String]) -> String {
     for possibleIndex in 0 ..< frequencies.count {
         if tone == frequencies[possibleIndex] {
@@ -90,6 +119,7 @@ func getDesiredToneString(tone: Float, frequencies: [Float], noteNames: [String]
     }
     return String(format: "%.2f", tone)
 }
+
 
 //func convertOutOfBounds(val: Float) -> Float {
 //    print("convert out of bounds", val)
