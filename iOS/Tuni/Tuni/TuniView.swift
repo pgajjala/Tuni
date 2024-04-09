@@ -49,9 +49,6 @@ struct TuniView: View {
                     .frame(width: 25)
             }.frame(width: 360)
             
-            Spacer()
-                .frame(height: 50)
-            
             // when no sound is picked up, thumb will default to the center of the slider
             let sliderVal = tuni.data.frequency != -1 ? $tuni.data.frequency : $tuni.desiredTone
             
@@ -64,9 +61,15 @@ struct TuniView: View {
                 }
                 .offset(x: -5.5, y: 13) // exact positioning of ticker & text
                 
-                Slider(value: sliderVal,
-                       in: tuni.desiredTone / NOTE_RATIO ... tuni.desiredTone * NOTE_RATIO)
-            }
+                // the note value slider is not slidable
+                LinearGradient(
+                    gradient: Gradient(colors: [.red, .blue]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+                .mask(Slider(value: sliderVal, in: tuni.desiredTone / NOTE_RATIO ... tuni.desiredTone * NOTE_RATIO))
+                
+            }.frame(height: 100)
             
         }
         .onAppear {
@@ -79,18 +82,18 @@ struct TuniView: View {
     }
 }
 
-func convertOutOfBounds(val: Float) -> Float {
-    print("convert out of bounds", val)
-    var toRet: Float = val
-    if val > highB {
-        toRet = lowB + (val - highB)/(highC - highB) * (lowC - lowB)
-    }
-    else if (val < lowC) {
-        toRet = highB + (lowC - val)/(lowC - lowB) * (highC - highB)
-    }
-    print("converted to", toRet)
-    return toRet
-}
+//func convertOutOfBounds(val: Float) -> Float {
+//    print("convert out of bounds", val)
+//    var toRet: Float = val
+//    if val > highB {
+//        toRet = lowB + (val - highB)/(highC - highB) * (lowC - lowB)
+//    }
+//    else if (val < lowC) {
+//        toRet = highB + (lowC - val)/(lowC - lowB) * (highC - highB)
+//    }
+//    print("converted to", toRet)
+//    return toRet
+//}
 
 #Preview {
     TuniView()

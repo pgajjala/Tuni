@@ -126,14 +126,14 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
         print("NOTE WITH FLATS: ", data.noteNameWithFlats)
     }
     
-    func convertOutOfBounds(val: Float) -> Float {
-        var toRet: Float = val
-        if val > highB {
-            toRet = lowB + (val - highB)/(highC - highB) * (lowC - lowB)
-        }
-        else if (val < lowC) {
-            toRet = highB + (lowC - val)/(lowC - lowB) * (highC - highB)
-        }
-        return toRet
-    }
+//    func convertOutOfBounds(val: Float) -> Float {
+//        var toRet: Float = val
+//        if val > highB {
+//            toRet = lowB + (val - highB)/(highC - highB) * (lowC - lowB)
+//        }
+//        else if (val < lowC) {
+//            toRet = highB + (lowC - val)/(lowC - lowB) * (highC - highB)
+//        }
+//        return toRet
+//    }
 }
