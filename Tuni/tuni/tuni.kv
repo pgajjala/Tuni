@@ -15,45 +15,50 @@ BoxLayout:
       pos: self.pos
       size: self.size
   orientation: 'vertical'
+
   BoxLayout:
     orientation: 'vertical'
-    padding: 30
-    size_hint_y: 0.66
-    # hue
+    padding: 10
+    size_hint_y: 0.80
+
+    # FloatLayout:
+      # opacity: 0.5
+      # canvas:
+      #  Color:
+      #    rgba: 1, 0, 0, 1
+      #  Line:
+      #    width: dp(2.)
+      #    points: [self.center_x, self.height / 4, self.center_x, self.height * 3/4]
+      
+    # desired
     GradientSlider:
-      id: hue_slider
-      size_hint_y: 0.33
-      colors: red, yellow, green, cyan, blue, magenta, red
-      value: app.hue
-      on_value: app.hue = self.value_normalized
-    # saturation
+      id: desired_slider
+      size_hint_y: 0.50
+      colors: black, black
+      value: app.desired
+      on_value: app.desired = self.value_normalized
+    
+
+    # current note
     GradientSlider:
-      id: saturation_slider
-      size_hint_y: 0.33
-      colors: white, hsv_to_rgb(app.hue, 1.0, 1.0)
-      value: app.saturation
-      on_value: app.saturation = self.value_normalized
-    # brightness
-    GradientSlider:
-      id: brightness
-      size_hint_y: 0.33
-      colors: (0, 0, 0, 1), (1, 1, 1, 1)
-      thumb_image_light: 'images/brightness_icon_light_small.png'
-      thumb_image_dark: 'images/brightness_icon_dark_small.png'
-      value: app.brightness
-      on_value: app.brightness = self.value_normalized
+      id: current_note_slider
+      size_hint_y: 0.50
+      colors: red, green, blue
+      value: app.current_note
+      on_value: app.current_note = self.value_normalized
+      
   BoxLayout:
     orientation: 'vertical'
-    size_hint_y: 0.33
+    size_hint_y: 0.20
     ColorBox:
       id: button_hue
       size_hint_y: 0.1
-      color: hsv_to_rgb(app.hue, app.saturation, 1.0)
+      color: hsv_to_rgb(app.current_note*2/3, 1.0, 1.0)
     LampiToggle:
       id: button_onoff
       size_hint_y: 0.90
       image: 'images/power_icon_light.png'
-      accent_color: hsv_to_rgb(hue_slider.value, saturation_slider.value, 1.0)
+      accent_color: hsv_to_rgb(app.current_note*2/3, 1.0, 1.0)
       text: ''
-      state: 'down' if app.lamp_is_on else 'normal'
-      on_state:  app.lamp_is_on = True if self.state == 'down' else False
+      state: 'down' if app.tuni_is_on else 'normal'
+      on_state:  app.tuni_is_on = True if self.state == 'down' else False
