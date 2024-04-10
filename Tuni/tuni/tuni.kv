@@ -1,0 +1,64 @@
+#:kivy 1.9
+#:import hsv_to_rgb colorsys.hsv_to_rgb
+#:import rgb_to_hsv colorsys.rgb_to_hsv
+
+#:include tuni/controls/gradient_slider.kv
+#:include tuni/controls/lampi_toggle.kv
+#:include tuni/controls/color_box.kv
+#:include tuni/colors.kv
+
+BoxLayout:
+  canvas.before:
+    Color:
+      rgba: offwhite
+    Rectangle:
+      pos: self.pos
+      size: self.size
+  orientation: 'vertical'
+
+  BoxLayout:
+    orientation: 'vertical'
+    padding: 10
+    size_hint_y: 0.80
+
+    # FloatLayout:
+      # opacity: 0.5
+      # canvas:
+      #  Color:
+      #    rgba: 1, 0, 0, 1
+      #  Line:
+      #    width: dp(2.)
+      #    points: [self.center_x, self.height / 4, self.center_x, self.height * 3/4]
+      
+    # desired
+    GradientSlider:
+      id: desired_slider
+      size_hint_y: 0.50
+      colors: black, black
+      value: app.desired
+      on_value: app.desired = self.value_normalized
+    
+
+    # current note
+    GradientSlider:
+      id: current_note_slider
+      size_hint_y: 0.50
+      colors: red, green, blue
+      value: app.current_note
+      on_value: app.current_note = self.value_normalized
+      
+  BoxLayout:
+    orientation: 'vertical'
+    size_hint_y: 0.20
+    ColorBox:
+      id: button_hue
+      size_hint_y: 0.1
+      color: hsv_to_rgb(app.current_note*2/3, 1.0, 1.0)
+    LampiToggle:
+      id: button_onoff
+      size_hint_y: 0.90
+      image: 'images/power_icon_light.png'
+      accent_color: hsv_to_rgb(app.current_note*2/3, 1.0, 1.0)
+      text: ''
+      state: 'down' if app.tuni_is_on else 'normal'
+      on_state:  app.tuni_is_on = True if self.state == 'down' else False

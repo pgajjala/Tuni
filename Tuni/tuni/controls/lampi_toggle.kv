@@ -1,0 +1,30 @@
+#:import LampiToggle tuni.controls.lampi_toggle.LampiToggle
+#:include tuni/colors.kv
+
+<-LampiToggle>:
+
+    _text_height: label.texture_size[1]
+
+    canvas.before:
+        Color:
+            rgb: black
+        Rectangle:
+            pos: root.pos
+            size: root.size
+
+    Image:
+        id: image
+        pos: root.center_x - (dp(root.image_size) / 2), root.center_y - (dp(root.image_size) / 2)
+        size: dp(root.image_size), dp(root.image_size)
+        source: root.image
+        keep_ratio: True
+        allow_stretch: True
+        color: root._state_color
+
+    Label:
+        id: label
+        halign: 'center'
+        pos: root.center_x - (self.width/2), root.center_y - (dp(root.image_size) / 2) - self.height - dp(root.label_spacing)
+        size: self.texture_size
+        text: root.text
+        color: root._state_color
