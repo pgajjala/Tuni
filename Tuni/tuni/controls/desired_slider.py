@@ -5,11 +5,17 @@ from kivy.uix.slider import Slider
 from kivy.graphics.texture import Texture
 from kivy.properties import ListProperty, ObjectProperty, StringProperty
 from kivy.clock import Clock
+from kivy.graphics import Color, Line
+from kivy.uix.label import Label
 from array import array
+from kivy.core.window import Window
 
+noteFrequencies = [16.35, 17.32, 18.35, 19.45, 20.6, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87]
 
-class GradientSlider(Slider):
+noteNamesWithSharps = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+noteNamesWithFlats = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
 
+class DesiredSlider(Slider):
     colors = ListProperty()
     thumb_image_light = StringProperty()
     thumb_image_dark = StringProperty()
@@ -19,14 +25,18 @@ class GradientSlider(Slider):
     _thumb_color = ListProperty([1.0, 1.0, 1.0, 1.0])
     _thumb_border_color = ListProperty([1.0, 1.0, 1.0, 1.0])
 
+    _desired_val = 0
+    _mapped_desired_val = 16.35
+
     def __init__(self, **kwargs):
-        super(GradientSlider, self).__init__(**kwargs)
-        Clock.schedule_once(self._update_ui)
+        super(DesiredSlider, self).__init__(**kwargs)
+        Clock.schedule_once(self._draw_tick_marks)
 
     def on_colors(self, instance, value):
         self._update_ui()
 
     def on_value(self, instance, value):
+        self._desired_val = round(self.value * 50) / 50
         self._update_thumb_color()
         self._update_thumb_image()
 
@@ -68,12 +78,13 @@ class GradientSlider(Slider):
         first_color_index = 0
         second_color_index = 0
 
-        position = self.value * float(len(self.colors) - 1)
-        first_color_index = math.trunc(position)
+        position = self._desired_val * float(len(self.colors) - 1)
+
+        first_color_index = math.trunc(position * (len(self.colors) - 1))
         second_color_index = first_color_index + 1
         if second_color_index > len(self.colors) - 1:
             second_color_index = first_color_index
-        pos = position - float(first_color_index)
+        pos = position * (len(self.colors) - 1) - first_color_index
 
         first_color = self.colors[first_color_index]
         second_color = self.colors[second_color_index]
@@ -95,3 +106,28 @@ class GradientSlider(Slider):
             self._thumb_image = self.thumb_image_light
         else:
             self._thumb_image = self.thumb_image_dark
+
+    def _draw_tick_marks(self, *args):
+        # Remove existing tick marks
+        self.canvas.before.clear()
+        with self.canvas.after:
+            # Draw tick marks
+            for i in range(12):
+                Color(0, 0, 1)
+                Line(rectangle=(25 + i*17, 235, 1, 30))
+                label = Label(text=str(noteNamesWithSharps[i]), pos=(i*17-23, 175), color=(0, 0, 0, 1), font_size=12)
+                self.add_widget(label)
+            Color(0,0,0)
+            Line(rectangle=((Window.width - 1) / 2, 115, 1, 30))
+
+    # def get_tone_string_helper(self):
+        
+
+    # # func getDesiredToneString(tone: Float, frequencies: [Float], noteNames: [String]) -> String {
+    # # for possibleIndex in 0 ..< frequencies.count {
+    # #     if tone == frequencies[possibleIndex] {
+    # #         return noteNames[possibleIndex]
+    # #     }
+    # # }
+    # # return String(format: "%.2f", tone)
+    # # }

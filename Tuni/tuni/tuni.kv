@@ -3,6 +3,7 @@
 #:import rgb_to_hsv colorsys.rgb_to_hsv
 
 #:include tuni/controls/gradient_slider.kv
+#:include tuni/controls/desired_slider.kv
 #:include tuni/controls/lampi_toggle.kv
 #:include tuni/controls/color_box.kv
 #:include tuni/colors.kv
@@ -31,7 +32,7 @@ BoxLayout:
       #    points: [self.center_x, self.height / 4, self.center_x, self.height * 3/4]
       
     # desired
-    GradientSlider:
+    DesiredSlider:
       id: desired_slider
       size_hint_y: 0.50
       colors: black, black

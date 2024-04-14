@@ -1,0 +1,39 @@
+#:import DesiredSlider tuni.controls.desired_slider.DesiredSlider
+
+#:include tuni/colors.kv
+
+
+<-DesiredSlider>:
+    canvas:
+        Color:
+            rgb: 0.75, 0.75, 0.75
+        Rectangle:
+            pos: self.x + self.padding, self.center_y - dp(4)
+            size: self.width - self.padding * 2, dp(8)
+            texture: self._texture
+        Color:
+            rgb: 1, 1, 1
+        Rectangle:
+            pos: self.x + self.padding + dp(1), self.center_y - dp(3)
+            size: self.width - (self.padding * 2) - dp(2), dp(6)
+            texture: self._texture
+        Color:
+            rgba: self._thumb_color 
+        Ellipse:
+            pos: self.value_pos[0] - dp(10), self.center_y - dp(11)
+            size: dp(20), dp(20)
+        Color:
+            rgb: self._thumb_border_color
+        SmoothLine:
+            circle: self.value_pos[0], self.center_y - dp(1), dp(10)
+            width: dp(1)
+
+    step: 0.01
+    min: 0.0
+    max: 1.0
+
+    Image:
+        pos: root.value_pos[0] - self.width/2, root.center_y - self.height/2 - dp(1)
+        size: dp(20 if self.source else 0), dp(20 if self.source else 0)
+        allow_stretch: True
+        source: root._thumb_image
