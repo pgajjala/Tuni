@@ -26,7 +26,8 @@ class DesiredSlider(Slider):
     _thumb_border_color = ListProperty([1.0, 1.0, 1.0, 1.0])
 
     _desired_val = 0
-    _mapped_desired_val = 16.35
+    _desired_val_frequency = 16.35
+    _note_label = Label()
 
     def __init__(self, **kwargs):
         super(DesiredSlider, self).__init__(**kwargs)
@@ -37,9 +38,10 @@ class DesiredSlider(Slider):
 
     def on_value(self, instance, value):
         self._desired_val = round(self.value * 44) / 44
-        print(self.slider_val_to_freq(self._desired_val))
+        self._desired_val_frequency = self.slider_val_to_freq(self._desired_val)
         self._update_thumb_color()
         self._update_thumb_image()
+        Clock.schedule_once(self._update_label)
 
     def on_thumb_image_dark(self, instance, value):
         self._update_thumb_image()
@@ -120,6 +122,15 @@ class DesiredSlider(Slider):
                 self.add_widget(label)
             Color(0,0,0)
             Line(rectangle=((Window.width - 1) / 2, 115, 1, 30))
+            self._note_label = Label(
+                text=self.get_tone_string_helper(self._desired_val_frequency), 
+                pos=(73, 50), 
+                color=(0, 0, 0, 1), 
+                font_size=12)
+            self.add_widget(self._note_label)
+
+    def _update_label(self, *args):
+        self._note_label.text = self.get_tone_string_helper(self._desired_val_frequency)
 
     def slider_val_to_freq(self, slider_val):
         #assuming slider val between 0 and 1, in increments of 0.022727...
@@ -133,14 +144,9 @@ class DesiredSlider(Slider):
         return noteFrequencies[low] + scaled_val * (noteFrequencies[high] - noteFrequencies[low])
 
 
-    # def get_tone_string_helper(self):
+    def get_tone_string_helper(self, scaled_tone):
+        for i in range(len(noteFrequencies)):
+            if scaled_tone == noteFrequencies[i]:
+                return noteNamesWithSharps[i]
         
-
-    # # func getDesiredToneString(tone: Float, frequencies: [Float], noteNames: [String]) -> String {
-    # # for possibleIndex in 0 ..< frequencies.count {
-    # #     if tone == frequencies[possibleIndex] {
-    # #         return noteNames[possibleIndex]
-    # #     }
-    # # }
-    # # return String(format: "%.2f", tone)
-    # # }
+        return str(round(scaled_tone,2))
