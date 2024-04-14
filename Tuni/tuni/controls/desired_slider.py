@@ -36,7 +36,8 @@ class DesiredSlider(Slider):
         self._update_ui()
 
     def on_value(self, instance, value):
-        self._desired_val = round(self.value * 50) / 50
+        self._desired_val = round(self.value * 44) / 44
+        print(self.slider_val_to_freq(self._desired_val))
         self._update_thumb_color()
         self._update_thumb_image()
 
@@ -119,6 +120,18 @@ class DesiredSlider(Slider):
                 self.add_widget(label)
             Color(0,0,0)
             Line(rectangle=((Window.width - 1) / 2, 115, 1, 30))
+
+    def slider_val_to_freq(self, slider_val):
+        #assuming slider val between 0 and 1, in increments of 0.022727...
+        scaled_val = slider_val * 11
+        low = math.floor(scaled_val)
+        high = math.ceil(scaled_val)
+        
+        if low == high:
+            return noteFrequencies[low]
+        
+        return noteFrequencies[low] + scaled_val * (noteFrequencies[high] - noteFrequencies[low])
+
 
     # def get_tone_string_helper(self):
         
