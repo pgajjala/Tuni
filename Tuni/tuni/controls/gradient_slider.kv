@@ -20,12 +20,12 @@
         Color:
             rgba: self._thumb_color 
         Ellipse:
-            pos: self.value_pos[0] - dp(16), self.center_y - dp(17)
-            size: dp(32), dp(32)
+            pos: self.value_pos[0] - dp(10), self.center_y - dp(11)
+            size: dp(20), dp(20)
         Color:
             rgb: self._thumb_border_color
         SmoothLine:
-            circle: self.value_pos[0], self.center_y - dp(1), dp(16)
+            circle: self.value_pos[0], self.center_y - dp(1), dp(10)
             width: dp(1)
 
     step: 0.01

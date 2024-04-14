@@ -5,8 +5,8 @@ from kivy.uix.slider import Slider
 from kivy.graphics.texture import Texture
 from kivy.properties import ListProperty, ObjectProperty, StringProperty
 from kivy.clock import Clock
+from kivy.graphics import Color, Line, Rectangle
 from array import array
-
 
 class GradientSlider(Slider):
 
@@ -21,7 +21,7 @@ class GradientSlider(Slider):
 
     def __init__(self, **kwargs):
         super(GradientSlider, self).__init__(**kwargs)
-        Clock.schedule_once(self._update_ui)
+        Clock.schedule_once(self._draw_tick_marks)
 
     def on_colors(self, instance, value):
         self._update_ui()
@@ -68,12 +68,14 @@ class GradientSlider(Slider):
         first_color_index = 0
         second_color_index = 0
 
-        position = self.value * float(len(self.colors) - 1)
-        first_color_index = math.trunc(position)
+        # Calculate the nearest value out of 48 possible values
+        position = round(self.value * 44) / 44
+
+        first_color_index = math.trunc(position * (len(self.colors) - 1))
         second_color_index = first_color_index + 1
         if second_color_index > len(self.colors) - 1:
             second_color_index = first_color_index
-        pos = position - float(first_color_index)
+        pos = position * (len(self.colors) - 1) - first_color_index
 
         first_color = self.colors[first_color_index]
         second_color = self.colors[second_color_index]
@@ -95,3 +97,12 @@ class GradientSlider(Slider):
             self._thumb_image = self.thumb_image_light
         else:
             self._thumb_image = self.thumb_image_dark
+
+    def _draw_tick_marks(self, *args):
+        # Remove existing tick marks
+        self.canvas.before.clear()
+        with self.canvas.after:
+            # Draw tick marks
+            Color(0, 0, 1)
+            for i in range(12):
+                Line(rectangle=(25 + i*17, 235, 1, 30))
