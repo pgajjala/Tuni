@@ -5,8 +5,13 @@ from kivy.uix.slider import Slider
 from kivy.graphics.texture import Texture
 from kivy.properties import ListProperty, ObjectProperty, StringProperty
 from kivy.clock import Clock
-from kivy.graphics import Color, Line, Rectangle
+from kivy.graphics import Color, Line
+from kivy.uix.label import Label
 from array import array
+from kivy.core.window import Window
+
+noteNamesWithSharps = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+noteNamesWithFlats = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
 
 class GradientSlider(Slider):
 
@@ -103,6 +108,10 @@ class GradientSlider(Slider):
         self.canvas.before.clear()
         with self.canvas.after:
             # Draw tick marks
-            Color(0, 0, 1)
             for i in range(12):
+                Color(0, 0, 1)
                 Line(rectangle=(25 + i*17, 235, 1, 30))
+                label = Label(text=str(noteNamesWithSharps[i]), pos=(i*17-23, 175), color=(0, 0, 0, 1), font_size=12)
+                self.add_widget(label)
+            Color(0,0,0)
+            Line(rectangle=((Window.width - 1) / 2, 115, 1, 30))
