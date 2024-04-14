@@ -20,7 +20,6 @@ struct TuniView: View {
     
     var body: some View {
         VStack {
-            
             Toggle(isOn: $tuni.namesInSharps) {
                 Text("Express Note Names in Sharps")
             }.toggleStyle(iOSCheckboxToggleStyle())
@@ -72,7 +71,7 @@ struct TuniView: View {
                 
                 // the note value slider is not slidable
                 LinearGradient(
-                    gradient: Gradient(colors: [.red, .blue]),
+                    gradient: Gradient(colors: [.red, .green, .blue]),
                     startPoint: .leading,
                     endPoint: .trailing
                 )
