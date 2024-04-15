@@ -117,14 +117,14 @@ class DesiredSlider(Slider):
             # Draw tick marks
             for i in range(12):
                 Color(0, 0, 1)
-                Line(rectangle=(25 + i*17, 235, 1, 30))
-                label = Label(text=str(noteNamesWithSharps[i]), pos=(i*17-23, 175), color=(0, 0, 0, 1), font_size=12)
+                Line(rectangle=(25 + i*17, 235, 1, 30)) # og value is 235
+                label = Label(text=str(noteNamesWithSharps[i]), pos=(i*17-23, 175), color=(0, 0, 0, 1), font_size=12) # og value is 175
                 self.add_widget(label)
             Color(0,0,0)
-            Line(rectangle=((Window.width - 1) / 2, 115, 1, 30))
+            Line(rectangle=((Window.width - 1) / 2, 115, 1, 30)) # og is 115
             self._note_label = Label(
                 text=self.get_tone_string_helper(self._desired_val_frequency), 
-                pos=(73, 50), 
+                pos=(73, 55), # og is 55
                 color=(0, 0, 0, 1), 
                 font_size=12)
             self.add_widget(self._note_label)
