@@ -23,22 +23,6 @@ BoxLayout:
     padding: 10
     size_hint_y: 0.80
 
-    # desired
-    DesiredSlider:
-      id: desired_slider
-      size_hint_y: 0.40
-      colors: black, black
-      value: app.desired
-      on_value: app.desired = self.value_normalized
-
-    # current note
-    GradientSlider:
-      id: current_note_slider
-      size_hint_y: 0.40
-      colors: red, green, blue
-      value: app.current_note
-      on_value: app.current_note = self.value_normalized
-    
     BoxLayout:
       orientation: 'horizontal'
       size_hint_y: 0.2 
@@ -54,6 +38,22 @@ BoxLayout:
         text: "Express note names with sharps"
         color: black
         font_size: 12
+
+    # desired
+    DesiredSlider:
+      id: desired_slider
+      size_hint_y: 0.40
+      colors: black, black
+      value: app.desired
+      on_value: app.desired = self.value_normalized
+
+    # current note
+    GradientSlider:
+      id: current_note_slider
+      size_hint_y: 0.40
+      colors: red, green, blue
+      value: app.current_note
+      on_value: app.current_note = self.value_normalized
       
   BoxLayout:
     orientation: 'vertical'
