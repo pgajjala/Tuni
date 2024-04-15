@@ -1,6 +1,7 @@
 import platform
 from kivy.app import App
 from kivy.properties import NumericProperty, AliasProperty, BooleanProperty
+from kivy.uix.checkbox import CheckBox
 from kivy.clock import Clock
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
