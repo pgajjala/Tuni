@@ -1,6 +1,7 @@
 #:kivy 1.9
 #:import hsv_to_rgb colorsys.hsv_to_rgb
 #:import rgb_to_hsv colorsys.rgb_to_hsv
+#:import CheckBox kivy.uix.checkbox
 
 #:include tuni/controls/gradient_slider.kv
 #:include tuni/controls/desired_slider.kv
@@ -22,19 +23,26 @@ BoxLayout:
     padding: 10
     size_hint_y: 0.80
 
-    # FloatLayout:
-      # opacity: 0.5
-      # canvas:
-      #  Color:
-      #    rgba: 1, 0, 0, 1
-      #  Line:
-      #    width: dp(2.)
-      #    points: [self.center_x, self.height / 4, self.center_x, self.height * 3/4]
+    BoxLayout:
+      orientation: 'horizontal'
+      size_hint_y: 0.2 
+
+      CheckBox:
+        size_hint_x: 0.15
+        id: note_name_toggle
+        active: False
+        color: black
       
+      Label: 
+        size_hint_x: 0.75
+        text: "Express note names with sharps"
+        color: black
+        font_size: 12
+
     # desired
     DesiredSlider:
       id: desired_slider
-      size_hint_y: 0.50
+      size_hint_y: 0.40
       colors: black, black
       value: app.desired
       on_value: app.desired = self.value_normalized
@@ -42,7 +50,7 @@ BoxLayout:
     # current note
     GradientSlider:
       id: current_note_slider
-      size_hint_y: 0.50
+      size_hint_y: 0.40
       colors: red, green, blue
       value: app.current_note
       on_value: app.current_note = self.value_normalized
