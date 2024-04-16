@@ -1,6 +1,6 @@
 import platform
 from kivy.app import App
-from kivy.properties import NumericProperty, AliasProperty, BooleanProperty
+from kivy.properties import NumericProperty, AliasProperty, BooleanProperty, ListProperty
 from kivy.uix.checkbox import CheckBox
 from kivy.clock import Clock
 from kivy.uix.popup import Popup
@@ -15,6 +15,8 @@ import pigpio
 import tuni.tuni_util
 
 # MQTT_CLIENT_ID = "lamp_ui"
+
+import logging
 
 
 class TuniApp(App):
@@ -70,6 +72,14 @@ class TuniApp(App):
         #                   keepalive=MQTT_BROKER_KEEP_ALIVE_SECS)
         # self.mqtt.loop_start()
         self.set_up_GPIO_and_device_status_popup()
+    
+    def on_checkbox_pressed(self, instance, value):
+        checkbox_state = value
+        print("checkbox in tuni app", checkbox_state)
+        desired_slider = self.root.ids.desired_slider
+        desired_slider.draw_tick_marks(checkbox_state)
+        
+
 
     def on_current_note(self, instance, value):
         if self._updatingUI:

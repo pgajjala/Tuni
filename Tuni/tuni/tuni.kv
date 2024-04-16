@@ -31,11 +31,12 @@ BoxLayout:
         size_hint_x: 0.15
         id: note_name_toggle
         active: False
+        on_active: app.on_checkbox_pressed(self, self.active)
         color: black
       
       Label: 
         size_hint_x: 0.75
-        text: "Express note names with sharps"
+        text: "Express note names in sharps"
         color: black
         font_size: 12
 
