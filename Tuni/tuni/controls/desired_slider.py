@@ -3,14 +3,12 @@ import colorsys
 
 from kivy.uix.slider import Slider
 from kivy.graphics.texture import Texture
-from kivy.properties import ListProperty, ObjectProperty, StringProperty
+from kivy.properties import ListProperty, ObjectProperty, StringProperty, BooleanProperty
 from kivy.clock import Clock
 from kivy.graphics import Color, Line
 from kivy.uix.label import Label
 from array import array
 from kivy.core.window import Window
-
-import logging
 
 noteFrequencies = [16.35, 17.32, 18.35, 19.45, 20.6, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87]
 
@@ -34,9 +32,12 @@ class DesiredSlider(Slider):
     _desired_val_frequency = 16.35
     _note_label = Label()
 
+    checkbox_state = BooleanProperty(False)
+
     def __init__(self, **kwargs):
         super(DesiredSlider, self).__init__(**kwargs)
-        Clock.schedule_once(lambda dt: self.draw_tick_marks(False), 0)
+        # Clock.schedule_once(lambda dt: self.draw_tick_marks(False), 0)
+        Clock.schedule_once(self.draw_tick_marks)
 
     def on_colors(self, instance, value):
         self._update_ui()
@@ -115,35 +116,37 @@ class DesiredSlider(Slider):
         else:
             self._thumb_image = self.thumb_image_dark
 
-    def draw_tick_marks(self, checkbox_state):
-        self.canvas.before.clear()
+    def draw_tick_marks(self, *args):
+        # clear existing labels
+        for widget in self.children[:]:
+            if isinstance(widget, Label):
+                self.remove_widget(widget)
         
-        with self.canvas.after:
-            # THIS IS NOT WORKING EVEN THOUGH IT'S IDENTIFYING WIDGETS CORRECTLY
-            # MESSING AROUND W/ PLACEMENT
-            for widget in self.children[:]: 
-                print("widget", widget)
-                if isinstance(widget, Label):
-                    print("in here")
-                    self.remove_widget(widget)
-
-            # Draw tick marks
-            for i in range(12):
+        # draw tickmarks
+        for i in range(12):
+            with self.canvas:
                 Color(0, 0, 1)
                 Line(rectangle=(25 + i*17, 200, 1, 30))
-                note_names = self._note_names_sharps if checkbox_state else self._note_names_flats
-                print("checkbox", checkbox_state)
-                print("notes", note_names)
-                label = Label(text=str(note_names[i]), pos=(i*17-23, 140), color=(0, 0, 0, 1), font_size=12)
-                self.add_widget(label)
-            Color(0,0,0)
+
+            # add labels to desired slider
+            print("checkbox state in desired slider", self.checkbox_state)
+            note_names = self._note_names_sharps if self.checkbox_state else self._note_names_flats
+            label = Label(text=str(note_names[i]), pos=(i*17-23, 140), color=(0, 0, 0, 1), font_size=12)
+            self.add_widget(label)
+
+        # tickmark for bottom slider
+        with self.canvas:
+            Color(0, 0, 0)
             Line(rectangle=((Window.width - 1) / 2, 105, 1, 30))
-            self._note_label = Label(
-                text=self.get_tone_string_helper(self._desired_val_frequency), 
-                pos=(73, 40), 
-                color=(0, 0, 0, 1), 
-                font_size=12)
-            self.add_widget(self._note_label)
+        
+        # label for bottom slider
+        self._note_label = Label(
+            text=self.get_tone_string_helper(self._desired_val_frequency), 
+            pos=(73, 40), 
+            color=(0, 0, 0, 1), 
+            font_size=12)
+        self.add_widget(self._note_label)
+
         
 
     def _update_label(self, *args):
@@ -164,6 +167,6 @@ class DesiredSlider(Slider):
     def get_tone_string_helper(self, scaled_tone):
         for i in range(len(noteFrequencies)):
             if scaled_tone == noteFrequencies[i]:
-                return self._note_names_sharps[i]
+                return self._note_names_sharps[i] if self.checkbox_state else self._note_names_flats[i]
         
         return str(round(scaled_tone,2))

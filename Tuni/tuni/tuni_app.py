@@ -35,6 +35,7 @@ class TuniApp(App):
     _current_note = NumericProperty()
     _desired = NumericProperty()
     tuni_is_on = BooleanProperty()
+    checkbox_state = False
 
     # hue is now current note
     def _get_current_note(self):
@@ -74,10 +75,12 @@ class TuniApp(App):
         self.set_up_GPIO_and_device_status_popup()
     
     def on_checkbox_pressed(self, instance, value):
-        checkbox_state = value
-        print("checkbox in tuni app", checkbox_state)
+        self.checkbox_state = value
+        print("checkbox in tuni app", self.checkbox_state)
+
         desired_slider = self.root.ids.desired_slider
-        desired_slider.draw_tick_marks(checkbox_state)
+        desired_slider.checkbox_state = value
+        desired_slider.draw_tick_marks()
         
 
 
