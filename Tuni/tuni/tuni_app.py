@@ -1,35 +1,22 @@
 import platform
 from kivy.app import App
 from kivy.properties import NumericProperty, AliasProperty, BooleanProperty, ListProperty
-from kivy.uix.checkbox import CheckBox
 from kivy.clock import Clock
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.button import Button
 from math import fabs
 import json
 from paho.mqtt.client import Client
 import pigpio
-# from tuni_common import *
+from tuni_common import *
 import tuni.tuni_util
 
-# MQTT_CLIENT_ID = "lamp_ui"
+MQTT_CLIENT_ID = "tuni_ui"
 
 import logging
 
 
 class TuniApp(App):
-
-    # layout = FloatLayout(size=(300, 300))
-    # button = Button(
-    # text='Hello world',
-    # size_hint=(.5, .25),
-    # pos=(20, 20))
-    # layout.add_widget(button)
-
-
-
     _updated = False
     _updatingUI = False
     _current_note = NumericProperty()
@@ -42,6 +29,8 @@ class TuniApp(App):
         return self._current_note
 
     def _set_current_note(self, value):
+        print("set current note to value", value)
+
         self._current_note = value
 
     # saturation is now desired
@@ -61,17 +50,17 @@ class TuniApp(App):
 
     def on_start(self):
         self._publish_clock = None
-        # self.mqtt_broker_bridged = False
-        # self._associated = True
-        # self.association_code = None
-        # self.mqtt = Client(client_id=MQTT_CLIENT_ID)
-        # self.mqtt.enable_logger()
-        # self.mqtt.will_set(client_state_topic(MQTT_CLIENT_ID), "0",
-        #                    qos=2, retain=True)
-        # self.mqtt.on_connect = self.on_connect
-        # self.mqtt.connect(MQTT_BROKER_HOST, port=MQTT_BROKER_PORT,
-        #                   keepalive=MQTT_BROKER_KEEP_ALIVE_SECS)
-        # self.mqtt.loop_start()
+        self.mqtt_broker_bridged = False
+        self._associated = True
+        self.association_code = None
+        self.mqtt = Client(client_id=MQTT_CLIENT_ID)
+        self.mqtt.enable_logger()
+        self.mqtt.will_set(client_state_topic(MQTT_CLIENT_ID), "0",
+                           qos=2, retain=True)
+        self.mqtt.on_connect = self.on_connect
+        self.mqtt.connect(MQTT_BROKER_HOST, port=MQTT_BROKER_PORT,
+                          keepalive=MQTT_BROKER_KEEP_ALIVE_SECS)
+        self.mqtt.loop_start()
         self.set_up_GPIO_and_device_status_popup()
     
     def on_checkbox_pressed(self, instance, value):
@@ -105,57 +94,57 @@ class TuniApp(App):
             self._publish_clock = Clock.schedule_once(
                 lambda dt: self._update_leds(), 0.01)
 
-    # def on_connect(self, client, userdata, flags, rc):
-        # self.mqtt.publish(client_state_topic(MQTT_CLIENT_ID), b"1",
-        #                   qos=2, retain=True)
-        # self.mqtt.message_callback_add(TOPIC_LAMP_CHANGE_NOTIFICATION,
-        #                                self.receive_new_lamp_state)
-        # self.mqtt.message_callback_add(broker_bridge_connection_topic(),
-        #                                self.receive_bridge_connection_status)
-        # self.mqtt.message_callback_add(TOPIC_LAMP_ASSOCIATED,
-        #                                self.receive_associated)
-        # self.mqtt.subscribe(broker_bridge_connection_topic(), qos=1)
-        # self.mqtt.subscribe(TOPIC_LAMP_CHANGE_NOTIFICATION, qos=1)
-        # self.mqtt.subscribe(TOPIC_LAMP_ASSOCIATED, qos=2)
+    def on_connect(self, client, userdata, flags, rc):
+        self.mqtt.publish(client_state_topic(MQTT_CLIENT_ID), b"1",
+                          qos=2, retain=True)
+        self.mqtt.message_callback_add(TOPIC_LAMP_CHANGE_NOTIFICATION,
+                                       self.receive_new_lamp_state)
+        self.mqtt.message_callback_add(broker_bridge_connection_topic(),
+                                       self.receive_bridge_connection_status)
+        self.mqtt.subscribe(broker_bridge_connection_topic(), qos=1)
+        self.mqtt.subscribe(TOPIC_LAMP_CHANGE_NOTIFICATION, qos=1)
 
-    # def receive_bridge_connection_status(self, client, userdata, message):
-        # # monitor if the MQTT bridge to our cloud broker is up
-        # if message.payload == b"1":
-        #     self.mqtt_broker_bridged = True
-        # else:
-        #     self.mqtt_broker_bridged = False
+    def receive_bridge_connection_status(self, client, userdata, message):
+        # monitor if the MQTT bridge to our cloud broker is up
+        if message.payload == b"1":
+            self.mqtt_broker_bridged = True
+        else:
+            self.mqtt_broker_bridged = False
 
-    # def receive_new_lamp_state(self, client, userdata, message):
-    #     new_state = json.loads(message.payload.decode('utf-8'))
-    #     Clock.schedule_once(lambda dt: self._update_ui(new_state), 0.01)
+    def receive_new_lamp_state(self, client, userdata, message):
+        new_state = json.loads(message.payload.decode('utf-8'))
+        Clock.schedule_once(lambda dt: self._update_ui(new_state), 0.01)
 
-    # def _update_ui(self, new_state):
-    #     if self._updated and new_state['client'] == MQTT_CLIENT_ID:
-    #         # ignore updates generated by this client, except the first to
-    #         #   make sure the UI is syncrhonized with the lamp_service
-    #         return
-    #     self._updatingUI = True
-    #     try:
-    #         if 'color' in new_state:
-    #             self.hue = new_state['color']['h']
-    #             self.saturation = new_state['color']['s']
-    #         if 'brightness' in new_state:
-    #             self.brightness = new_state['brightness']
-    #         if 'on' in new_state:
-    #             self.lamp_is_on = new_state['on']
-    #     finally:
-    #         self._updatingUI = False
+    def _update_ui(self, new_state):
+        if self._updated and new_state['client'] == MQTT_CLIENT_ID:
+            # ignore updates generated by this client, except the first to
+            #   make sure the UI is syncrhonized with the lamp_service
+            return
+        self._updatingUI = True
+        try:
+            if 'current' in new_state:
+                self.current_note = new_state['current']
+            if 'desired' in new_state:
+                self.desired = new_state['desired']
+            if 'on' in new_state:
+                self.tuni_is_on = new_state['on']
+            if 'sharps' in new_state:
+                self.checkbox_state= new_state['sharps']
+            print("current slider value:", self.current_note)
+        finally:
+            self._updatingUI = False
 
-    #     self._updated = True
+        self._updated = True
 
     def _update_leds(self):
-        # msg = {'color': {'h': self._hue, 's': self._saturation},
-        #        'brightness': self._brightness,
-        #        'on': self.lamp_is_on,
-        #        'client': MQTT_CLIENT_ID}
-        # self.mqtt.publish(TOPIC_SET_LAMP_CONFIG,
-        #                   json.dumps(msg).encode('utf-8'),
-        #                   qos=1)
+        msg = {'current': self._current_note,
+               'desired': self._desired,
+               'on': self.tuni_is_on,
+               'sharps': self.checkbox_state,
+               'client': MQTT_CLIENT_ID}
+        self.mqtt.publish(TOPIC_SET_LAMP_CONFIG,
+                          json.dumps(msg).encode('utf-8'),
+                          qos=1)
         self._publish_clock = None
 
     def set_up_GPIO_and_device_status_popup(self):

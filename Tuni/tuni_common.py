@@ -3,9 +3,9 @@ import paho.mqtt.client
 DEVICE_ID_FILENAME = '/sys/class/net/eth0/address'
 
 # MQTT Topic Names
-TOPIC_SET_LAMP_CONFIG = "lamp/set_config"
-TOPIC_LAMP_CHANGE_NOTIFICATION = "lamp/changed"
-TOPIC_LAMP_ASSOCIATED = "lamp/associated"
+TOPIC_SET_LAMP_CONFIG = "tuni/set_config"
+TOPIC_LAMP_CHANGE_NOTIFICATION = "tuni/changed"
+TOPIC_LAMP_ASSOCIATED = "tuni/associated"
 
 
 def get_device_id():
@@ -14,7 +14,7 @@ def get_device_id():
 
 
 def client_state_topic(client_id):
-    return 'lamp/connection/{}/state'.format(client_id)
+    return 'tuni/connection/{}/state'.format(client_id)
 
 
 def broker_bridge_connection_topic():
@@ -27,3 +27,7 @@ MQTT_VERSION = paho.mqtt.client.MQTTv311
 MQTT_BROKER_HOST = "localhost"
 MQTT_BROKER_PORT = 1883
 MQTT_BROKER_KEEP_ALIVE_SECS = 60
+
+NOTE_RATIO = 1.059463
+LOW_C = 0.0
+HIGH_B = 1.0
