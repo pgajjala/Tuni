@@ -48,6 +48,7 @@ class DesiredSlider(Slider):
         self._update_thumb_color()
         self._update_thumb_image()
         Clock.schedule_once(self._update_label)
+        #self.draw_tick_marks()
 
     def on_thumb_image_dark(self, instance, value):
         self._update_thumb_image()

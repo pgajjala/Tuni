@@ -44,7 +44,7 @@ class CurrentNoteCharacteristic(Characteristic):
             callback(Characteristic.RESULT_ATTR_NOT_LONG, None)
         else:
             data = struct.pack("<B",
-                               int(self.lampi_state.current * 0xff))  #?
+                               int(self.tuni_state.current * 0xff))  #?
             callback(Characteristic.RESULT_SUCCESS, data)
 
     def onWriteRequest(self, data, offset, withoutResponse, callback):
@@ -55,14 +55,14 @@ class CurrentNoteCharacteristic(Characteristic):
         else:
             new_current = data[0] / 0xff
             print(f'New current: {new_current}')
-            self.lampi_state.current = new_current #CHANGE
+            self.tuni_state.current = new_current
             callback(Characteristic.RESULT_SUCCESS)
 
-    def handle_current_change(self, newValue): # CHANGE
+    def handle_current_change(self, newValue):
         print(f"Handling current change: {newValue}")
         if self.updateValueCallback:
             data = struct.pack("<B",
-                               int(self.lampi_state.current * 0xff))
+                               int(self.tuni_state.current * 0xff))
             self.updateValueCallback(data)
 
 # endregion
