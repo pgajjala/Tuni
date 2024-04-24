@@ -28,7 +28,6 @@ BoxLayout:
       size_hint_y: 0.2 
 
       CheckBox:
-        id: checkbox
         size_hint_x: 0.15
         id: note_name_toggle
         active: False
@@ -56,7 +55,7 @@ BoxLayout:
       colors: red, green, blue
       value: app.current_note
       on_value: app.current_note = self.value_normalized
-      disabled: False
+      disabled: True
     #  checkbox_state: app.checkbox_state
       
   BoxLayout:
