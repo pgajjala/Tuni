@@ -183,8 +183,11 @@ class TuniService(object):
         onoff = self.get_current_onoff()
         desired = self.get_current_desired()
         current = self.get_current_current()
-        sharps = self.get_current_sharps
+        sharps = self.get_current_sharps()
         
+        #set sharps box to chekced
+        
+
         r, g, b = self.calculate_rgb(desired, current, onoff)
         self.lamp_driver.change_color(r, g, b)
         self.db.sync()

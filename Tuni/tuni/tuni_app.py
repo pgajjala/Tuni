@@ -77,8 +77,6 @@ class TuniApp(App):
         if self._publish_clock is None:
             self._publish_clock = Clock.schedule_once(
                 lambda dt: self._update_leds(), 0.01)
-        
-
 
     def on_current_note(self, instance, value):
         if self._updatingUI:
@@ -136,12 +134,19 @@ class TuniApp(App):
             if 'on' in new_state:
                 self.tuni_is_on = new_state['on']
             if 'sharps' in new_state:
-                self.checkbox_state= new_state['sharps']
+                self.checkbox_state = new_state['sharps']
+                print('sharps in state', new_state['sharps'])
+                self.root.ids.note_name_toggle.active = new_state['sharps']
+                desired_slider = self.root.ids.desired_slider
+                desired_slider.checkbox_state = new_state['sharps']
+                desired_slider.draw_tick_marks()
+                
+                
             print("current slider value:", self.current_note)
         finally:
             self._updatingUI = False
 
-        self._updated = True
+        self._updated = True 
 
     def _update_leds(self):
         msg = {'current': self._current_note,

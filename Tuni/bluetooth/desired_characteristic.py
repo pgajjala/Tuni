@@ -35,7 +35,7 @@ class DesiredCharacteristic(Characteristic):
         self.updateValueCallback = None
 
         self.tuni_state = tuni_state
-        self.tuni_state.on('desiredChange', self.handle_desired_change) #CHANGE
+        self.tuni_state.on('desiredChange', self.handle_desired_change)
 
 # region BLE Read/Write
     def onReadRequest(self, offset, callback):
@@ -43,7 +43,7 @@ class DesiredCharacteristic(Characteristic):
             callback(Characteristic.RESULT_ATTR_NOT_LONG, None)
         else:
             data = struct.pack("<B",
-                               int(self.tuni_state.desired * 0xff)) #CHANGE
+                               int(self.tuni_state.desired * 0xff))
             callback(Characteristic.RESULT_SUCCESS, data)
 
     def onWriteRequest(self, data, offset, withoutResponse, callback):
@@ -54,10 +54,10 @@ class DesiredCharacteristic(Characteristic):
         else:
             new_desired = data[0] / 0xff
             print(f'New desired: {new_desired}')
-            self.tuni_state.desired = new_desired #CHANGE
+            self.tuni_state.desired = new_desired
             callback(Characteristic.RESULT_SUCCESS)
 
-    def handle_desired_change(self, newValue): #CHANGE
+    def handle_desired_change(self, newValue):
         print(f"Handling desired note change: {newValue}")
         if self.updateValueCallback:
             data = struct.pack("<B",
