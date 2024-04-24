@@ -16,11 +16,14 @@ let highC: Float = 32.7
 let NOTE_RATIO: Float = 1.059463
 
 struct TuniView: View {
-    @StateObject var tuni = TunerConductor()
+    @Bindable var tuni: Tuni
+    @StateObject var tuniConductor = TunerConductor()
+    
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode> //?
     
     var body: some View {
         VStack {
-            Toggle(isOn: $tuni.namesInSharps) {
+            Toggle(isOn: $tuni.state.namesInSharps) {
                 Text("Express Note Names in Sharps")
             }.toggleStyle(iOSCheckboxToggleStyle())
             
@@ -42,7 +45,7 @@ struct TuniView: View {
                         .foregroundColor(.blue)
                 }.frame(width: 360)
                 
-                Slider(value: $tuni.desiredTick,
+                Slider(value: $tuniConductor.desiredTick,
                        in: 0 ... 11,
                        step: 0.25)
                 .frame(width:360)
@@ -50,22 +53,22 @@ struct TuniView: View {
             
             HStack{
                 ForEach(0..<11) { i in
-                    Text(tuni.currNoteNames[i])
+                    Text(tuniConductor.currNoteNames[i])
                         .frame(width: 22)
                 }
-                Text(tuni.currNoteNames[11])
+                Text(tuniConductor.currNoteNames[11])
                     .frame(width: 25)
             }.frame(width: 360)
             
             // when no sound is picked up, thumb will default to the center of the slider
-            let sliderVal = tuni.data.frequency != -1 ? $tuni.data.frequency : $tuni.desiredTone
+            let sliderVal = tuniConductor.data.frequency != -1 ? $tuniConductor.data.frequency : $tuniConductor.desiredTone
             
             ZStack {
                 VStack {
                     Rectangle()
                         .frame(width: 2, height: 40)
                         .foregroundColor(.blue)
-                    Text(getDesiredToneString(tone:tuni.desiredTone, frequencies:tuni.noteFrequencies, noteNames:tuni.currNoteNames))
+                    Text(getDesiredToneString(tone:tuniConductor.desiredTone, frequencies:tuniConductor.noteFrequencies, noteNames:tuniConductor.currNoteNames))
                 }
                 .offset(x: -5.5, y: 13) // exact positioning of ticker & text
                 
@@ -75,17 +78,17 @@ struct TuniView: View {
                     startPoint: .leading,
                     endPoint: .trailing
                 )
-                .mask(Slider(value: sliderVal, in: tuni.desiredTone / NOTE_RATIO ... tuni.desiredTone * NOTE_RATIO))
+                .mask(Slider(value: sliderVal, in: tuniConductor.desiredTone / NOTE_RATIO ... tuniConductor.desiredTone * NOTE_RATIO))
                 
             }.frame(height: 100)
         
             
         }
         .onAppear {
-            tuni.start()
+            tuniConductor.start()
         }
         .onDisappear {
-            tuni.stop()
+            tuniConductor.stop()
         }
         .padding()
     }
@@ -133,6 +136,6 @@ func getDesiredToneString(tone: Float, frequencies: [Float], noteNames: [String]
 //    return toRet
 //}
 
-#Preview {
-    TuniView()
-}
+//#Preview {
+//    TuniView()
+//}

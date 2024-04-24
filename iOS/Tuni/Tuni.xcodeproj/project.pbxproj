@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		945736852BD88500002106BD /* TuniManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945736842BD88500002106BD /* TuniManager.swift */; };
 		94A96BF22BB394470042E111 /* TuniApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A96BF12BB394470042E111 /* TuniApp.swift */; };
 		94A96BF42BB394470042E111 /* TuniView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A96BF32BB394470042E111 /* TuniView.swift */; };
 		94A96BF62BB394490042E111 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94A96BF52BB394490042E111 /* Assets.xcassets */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		945736842BD88500002106BD /* TuniManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuniManager.swift; sourceTree = "<group>"; };
 		94A96BEE2BB394470042E111 /* Tuni.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tuni.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94A96BF12BB394470042E111 /* TuniApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuniApp.swift; sourceTree = "<group>"; };
 		94A96BF32BB394470042E111 /* TuniView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuniView.swift; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 				94A96BF52BB394490042E111 /* Assets.xcassets */,
 				94A96BF72BB394490042E111 /* Preview Content */,
 				94A96C022BB3956F0042E111 /* Tuni.swift */,
+				945736842BD88500002106BD /* TuniManager.swift */,
 			);
 			path = Tuni;
 			sourceTree = "<group>";
@@ -160,6 +163,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				94A96C0E2BB3A0D30042E111 /* GradientSlider.swift in Sources */,
+				945736852BD88500002106BD /* TuniManager.swift in Sources */,
 				94A96BF42BB394470042E111 /* TuniView.swift in Sources */,
 				94A96C032BB3956F0042E111 /* Tuni.swift in Sources */,
 				94A96BF22BB394470042E111 /* TuniApp.swift in Sources */,
@@ -299,6 +303,7 @@
 				DEVELOPMENT_TEAM = F7CFN67W2A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Allow Tuni to control lamp via Bluetooth";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow Tuni to access Microphone";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -329,6 +334,7 @@
 				DEVELOPMENT_TEAM = F7CFN67W2A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Allow Tuni to control lamp via Bluetooth";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow Tuni to access Microphone";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
