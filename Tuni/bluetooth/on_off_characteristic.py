@@ -7,7 +7,6 @@ import struct
 
 class OnOffCharacteristic(Characteristic):
     def __init__(self, tuni_state: TuniState):
-        print('initting on/off note characteristic')
 
         Characteristic.__init__(self, {
             'uuid': '0004A7D3-6486-4761-87D7-B937D41781A2',
@@ -52,13 +51,13 @@ class OnOffCharacteristic(Characteristic):
             callback(Characteristic.RESULT_INVALID_ATTRIBUTE_LENGTH)
         else:
 
-            print(f'Writing on/off: {data}')
+            # print(f'Writing on/off: {data}')
             self.tuni_state.isOn = struct.unpack('?', data)[0]
             callback(Characteristic.RESULT_SUCCESS)
 # endregion
 
     def handle_on_off_change(self, newValue):
-        print("Handling on/off change")
+        # print("Handling on/off change")
         if self.updateValueCallback:
             data = data = [0x01] if self.tuni_state.isOn else [0x00]
             self.updateValueCallback(data)

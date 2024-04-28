@@ -51,13 +51,13 @@ class SharpsCharacteristic(Characteristic):
             callback(Characteristic.RESULT_INVALID_ATTRIBUTE_LENGTH)
         else:
 
-            print(f'Writing sharps: {data}')
+            # print(f'Writing sharps: {data}')
             self.tuni_state.sharps = struct.unpack('?', data)[0]
             callback(Characteristic.RESULT_SUCCESS)
 # endregion
 
     def handle_sharps_change(self, newValue):
-        print("Handling sharps change")
+        # print("Handling sharps change")
         if self.updateValueCallback:
             data = data = [0x01] if self.tuni_state.sharps else [0x00]
             self.updateValueCallback(data)

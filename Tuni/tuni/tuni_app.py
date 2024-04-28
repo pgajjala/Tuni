@@ -29,7 +29,7 @@ class TuniApp(App):
         return self._current_note
 
     def _set_current_note(self, value):
-        print("set current note to value", value)
+        # print("set current note to value", value)
 
         self._current_note = value
 
@@ -68,7 +68,7 @@ class TuniApp(App):
             return
     
         self.checkbox_state = value
-        print("checkbox in tuni app", self.checkbox_state)
+        # print("checkbox in tuni app", self.checkbox_state)
 
         desired_slider = self.root.ids.desired_slider
         desired_slider.checkbox_state = value
@@ -135,14 +135,14 @@ class TuniApp(App):
                 self.tuni_is_on = new_state['on']
             if 'sharps' in new_state:
                 self.checkbox_state = new_state['sharps']
-                print('sharps in state', new_state['sharps'])
+                # print('sharps in state', new_state['sharps'])
                 self.root.ids.note_name_toggle.active = new_state['sharps']
                 desired_slider = self.root.ids.desired_slider
                 desired_slider.checkbox_state = new_state['sharps']
                 desired_slider.draw_tick_marks()
                 
                 
-            print("current slider value:", self.current_note)
+            # print("current slider value:", self.current_note)
         finally:
             self._updatingUI = False
 

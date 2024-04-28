@@ -130,7 +130,7 @@ class DesiredSlider(Slider):
                 Line(rectangle=(25 + i*17, 200, 1, 30))
 
             # add labels to desired slider
-            print("checkbox state in desired slider", self.checkbox_state)
+            # print("checkbox state in desired slider", self.checkbox_state)
             note_names = self._note_names_sharps if self.checkbox_state else self._note_names_flats
             label = Label(text=str(note_names[i]), pos=(i*17-23, 140), color=(0, 0, 0, 1), font_size=12)
             self.add_widget(label)
