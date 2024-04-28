@@ -13,33 +13,35 @@ import Foundation
 class TuniManager: NSObject, ObservableObject {
     @Published var isScanning = true
 
-    var foundLampis: [Lampi] {
-        return Array(lampis.values)
+    var foundTunis: [Tuni] {
+        return Array(tunis.values)
     }
 
-    private var lampis = [String: Tuni]()
+    private var tunis = [String: Tuni]()
 
     private var bluetoothManager: CBCentralManager!
 
     override init() {
+        print("initting Tuni Manager")
         super.init()
         bluetoothManager = CBCentralManager(delegate: self, queue: nil)
     }
 }
 
 extension TuniManager: CBCentralManagerDelegate {
-    func scanForLampis() {
+    func scanForTunis() {
+        print("scanning")
         if bluetoothManager.state == .poweredOn {
             isScanning = true
             print("Scanning for Lampis")
-            bluetoothManager.scanForPeripherals(withServices: [Lampi.SERVICE_UUID])
+            bluetoothManager.scanForPeripherals(withServices: [Tuni.SERVICE_UUID])
             scheduleStopScan()
         }
     }
 
     private func scheduleStopScan() {
         Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { [weak self] _ in
-            if !(self?.lampis.isEmpty ?? true) {
+            if !(self?.tunis.isEmpty ?? true) {
                 self?.bluetoothManager.stopScan()
                 self?.isScanning = false
             } else {
@@ -50,16 +52,16 @@ extension TuniManager: CBCentralManagerDelegate {
     }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        scanForLampis()
+        scanForTunis()
     }
 
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
 
         if let peripheralName = peripheral.name {
-            print("Manager found Lampi: \(peripheralName)")
+            print("Manager found Tuni: \(peripheralName)")
 
-            let lampi = Lampi(lampiPeripheral: peripheral)
-            lampis[peripheralName] = lampi
+            let tuni = Tuni(tuniPeripheral: peripheral)
+            tunis[peripheralName] = tuni
 
             bluetoothManager.connect(peripheral)
         }
@@ -67,15 +69,15 @@ extension TuniManager: CBCentralManagerDelegate {
 
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Manager Connected to peripheral \(peripheral)")
-        peripheral.discoverServices([Lampi.SERVICE_UUID])
+        peripheral.discoverServices([Tuni.SERVICE_UUID])
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         if let peripheralName = peripheral.name,
-           let lampi = lampis[peripheralName] {
+           let tuni = tunis[peripheralName] {
             print("Manager Disconnected from peripheral \(peripheral)")
 
-            lampi.state.isConnected = false
+            tuni.state.isConnected = false
             bluetoothManager.connect(peripheral)
         }
     }

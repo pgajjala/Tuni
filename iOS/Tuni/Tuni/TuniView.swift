@@ -45,7 +45,7 @@ struct TuniView: View {
                         .foregroundColor(.blue)
                 }.frame(width: 360)
                 
-                Slider(value: $tuniConductor.desiredTick,
+                Slider(value: $tuniConductor.data.state.desiredTick,
                        in: 0 ... 11,
                        step: 0.25)
                 .frame(width:360)
@@ -53,22 +53,22 @@ struct TuniView: View {
             
             HStack{
                 ForEach(0..<11) { i in
-                    Text(tuniConductor.currNoteNames[i])
+                    Text(tuniConductor.data.state.currNoteNames[i])
                         .frame(width: 22)
                 }
-                Text(tuniConductor.currNoteNames[11])
+                Text(tuniConductor.data.state.currNoteNames[11])
                     .frame(width: 25)
             }.frame(width: 360)
             
             // when no sound is picked up, thumb will default to the center of the slider
-            let sliderVal = tuniConductor.data.frequency != -1 ? $tuniConductor.data.frequency : $tuniConductor.desiredTone
+            let sliderVal = tuniConductor.data.state.frequency != -1 ? $tuniConductor.data.state.frequency : $tuniConductor.data.state.desiredTone
             
             ZStack {
                 VStack {
                     Rectangle()
                         .frame(width: 2, height: 40)
                         .foregroundColor(.blue)
-                    Text(getDesiredToneString(tone:tuniConductor.desiredTone, frequencies:tuniConductor.noteFrequencies, noteNames:tuniConductor.currNoteNames))
+                    Text(getDesiredToneString(tone:tuniConductor.data.state.desiredTone, frequencies:tuniConductor.data.state.noteFrequencies, noteNames:tuniConductor.data.state.currNoteNames))
                 }
                 .offset(x: -5.5, y: 13) // exact positioning of ticker & text
                 
@@ -78,7 +78,7 @@ struct TuniView: View {
                     startPoint: .leading,
                     endPoint: .trailing
                 )
-                .mask(Slider(value: sliderVal, in: tuniConductor.desiredTone / NOTE_RATIO ... tuniConductor.desiredTone * NOTE_RATIO))
+                .mask(Slider(value: sliderVal, in: tuniConductor.data.state.desiredTone / NOTE_RATIO ... tuniConductor.data.state.desiredTone * NOTE_RATIO))
                 
             }.frame(height: 100)
         
@@ -98,10 +98,8 @@ struct iOSCheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         // 1
         Button(action: {
-
             // 2
             configuration.isOn.toggle()
-
         }, label: {
             HStack {
                 // 3

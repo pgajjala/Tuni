@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct TuniApp: App {
+    let DEVICE_NAME = "LAMPI-b827eba30b35"
     var body: some Scene {
         WindowGroup {
-            TuniView()
+            TuniView(tuni: Tuni(name: DEVICE_NAME))
         }
     }
 }

@@ -58,13 +58,14 @@ import SwiftUI
     }
 
     init(tuniPeripheral: CBPeripheral) {
+        print("initting tuni object")
         guard let peripheralName = tuniPeripheral.name else {
-            fatalError("Lampi must initialized with a peripheral with a name")
+            fatalError("Tuni must initialized with a peripheral with a name")
         }
 
         self.tuniPeripheral = tuniPeripheral
         self.name = peripheralName
-
+        
         super.init()
 
         self.setupPeripheral() // properties set in init() do not trigger didSet
@@ -72,7 +73,7 @@ import SwiftUI
 }
 
 extension Tuni {
-    static let SERVICE_UUID = CBUUID(string: "0001A7D3-6486-4761-87D7-B937D41781A2") // CHANGE THESE
+    static let SERVICE_UUID = CBUUID(string: "0001A7D3-6486-4761-87D7-B937D41781A2")
     static let CURRENT_UUID = CBUUID(string: "0002A7D3-6486-4761-87D7-B937D41781A2")
     static let DESIRED_UUID = CBUUID(string: "0003A7D3-6486-4761-87D7-B937D41781A2")
     static let ON_OFF_UUID = CBUUID(string: "0004A7D3-6486-4761-87D7-B937D41781A2")
@@ -107,7 +108,7 @@ extension Tuni {
     
     private func writeDesired() {
         if let desiredCharacteristic = desiredCharacteristic {
-            var desiredChar = UInt8(state.desiredTone) // CONVERT
+            var desiredChar = state.desiredTick / 11 // times?
             let data = Data(bytes: &desiredChar, count: 1)
             tuniPeripheral?.writeValue(data, for: desiredCharacteristic, type: .withResponse)
         }
@@ -115,7 +116,7 @@ extension Tuni {
     
     private func writeCurrent() {
         if let currentCharacteristic = currentCharacteristic {
-            var currentChar = UInt8(state.frequency) // CONVERT
+            var currentChar = (state.NOTE_RATIO * state.frequency - state.desiredTone) / (state.desiredTone * (pow(2, state.NOTE_RATIO) - 1))// CONVERT
             let data = Data(bytes: &currentChar, count: 1)
             tuniPeripheral?.writeValue(data, for: currentCharacteristic, type: .withResponse)
         }
@@ -123,7 +124,7 @@ extension Tuni {
     
     private func writeSharps() {
         if let sharpsCharacteristic = sharpsCharacteristic {
-            let data = Data(bytes: &state.sharps, count: 1)
+            let data = Data(bytes: &state.namesInSharps, count: 1)
             tuniPeripheral?.writeValue(data, for: sharpsCharacteristic, type: .withResponse)
         }
     }
@@ -161,15 +162,25 @@ extension Tuni {
         let noteNamesWithSharps = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"]
         let noteNamesWithFlats = ["C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B♭", "B"]
         
-        var currNoteNames: [String]
+        var currNoteNames: [String] = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"]
         
-        var namesInSharps: Bool {
+        let noteFrequencies: [Float] = [16.35, 17.32, 18.35, 19.45, 20.6, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87]
+        
+        var namesInSharps: Bool = true {
             didSet {
                 currNoteNames = namesInSharps ? noteNamesWithSharps : noteNamesWithFlats
             }
         }
         
-        var desiredTone: Float
+        var desiredTone: Float = 16.35
+        
+        var desiredTick: Float = 0.0 {
+            didSet {
+                desiredTone = Float(noteFrequencies[Int(floor(desiredTick))]) * pow(1.05,desiredTick - floor(desiredTick))
+            }
+        }
+        
+        let NOTE_RATIO: Float = 1.059463
     }
 }
 
@@ -181,6 +192,7 @@ extension Tuni: CBCentralManagerDelegate {
     }
 
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+        print("Found peripheral \(peripheral.name)")
         if peripheral.name == name {
             print("Found \(name)")
 
@@ -258,51 +270,46 @@ extension Tuni: CBPeripheralDelegate {
               !updatedValue.isEmpty else { return }
 
         switch characteristic.uuid {
-        case Tuni.CURRENT_UUID:
+//        case Tuni.CURRENT_UUID:
+//            var newState = state
+//
+//            let current = parseHSV(for: updatedValue) //change this lol
+//            newState.hue = hsv.hue
+//            newState.saturation = hsv.saturation
+//
+//            state = newState
 
-            var newState = state
-
-            let current = parseHSV(for: updatedValue) //change this lol
-            newState.hue = hsv.hue
-            newState.saturation = hsv.saturation
-
-            state = newState
-
-        case Tuni.BRIGHTNESS_UUID:
-            state.brightness = parseBrightness(for: updatedValue)
+        case Tuni.DESIRED_UUID:
+            state.desiredTick = parseDesired(for: updatedValue)
 
         case Tuni.ON_OFF_UUID:
-            state.isOn = parseOnOff(for: updatedValue)
-
+            state.isOn = parseBool(for: updatedValue)
+            
+        case Tuni.SHARPS_UUID:
+            state.isOn = parseBool(for: updatedValue)
+        
         default:
             print("Unhandled Characteristic UUID: \(characteristic.uuid)")
         }
     }
 
-    private func parseOnOff(for value: Data) -> Bool {
+    private func parseBool(for value: Data) -> Bool {
         return value.first == 1
     }
 
-    private func parseHSV(for value: Data) -> (hue: Double, saturation: Double) {
-        return (hue: Double(value[0]) / 255.0,
-                saturation: Double(value[1]) / 255.0)
-    }
+//    private func parseHSV(for value: Data) -> (hue: Double, saturation: Double) {
+//        return (hue: Double(value[0]) / 255.0,
+//                saturation: Double(value[1]) / 255.0)
+//    }
 
-    private func parseBrightness(for value: Data) -> Double {
-        return Double(value[0]) / 255.0
+    private func parseDesired(for value: Data) -> Float {
+        return Float(value[0] / 11) // divide?
     }
 }
 
 
 class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
-    @Published var data = Tuni(name: <#String#>)
-    
-    var desiredTick: Float = 0.0 {
-        didSet {
-            data.state.desiredTone = Float(noteFrequencies[Int(floor(desiredTick))]) * pow(1.05,desiredTick - floor(desiredTick))
-        }
-    }
-    
+    @Published var data = Tuni(name:"LAMPI-b827eba30b35")
     
     let engine = AudioEngine()
     let initialDevice: Device
@@ -335,12 +342,13 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
         tappableNodeC = Fader(tappableNodeB)
         silence = Fader(tappableNodeC, gain: 0)
         engine.output = silence
-        data.state.desiredTone = Float(noteFrequencies[Int(floor(desiredTick))]) * pow(1.05,desiredTick - floor(desiredTick))
+        
+        super.init()
+        
+        data.state.desiredTone = Float(noteFrequencies[Int(floor(data.state.desiredTick))]) * pow(1.05,data.state.desiredTick - floor(data.state.desiredTick))
         data.state.namesInSharps = true
         
         data.state.currNoteNames = data.state.noteNamesWithSharps
-        
-        super.init()
 
         tracker = PitchTap(mic) { pitch, amp in
             DispatchQueue.main.async {
@@ -378,10 +386,10 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
         }
        
         
-        print("FREQUENCY: ", data.state.frequency)
-        print("PITCH: ", data.state.pitch)
-        print("DESIRED TICK: ", desiredTick)
-        print("DESIRED TONE: ", data.state.desiredTone)
+//        print("FREQUENCY: ", data.state.frequency)
+//        print("PITCH: ", data.state.pitch)
+//        print("DESIRED TICK: ", data.state.desiredTick)
+//        print("DESIRED TONE: ", data.state.desiredTone)
 
         var minDistance: Float = 10000.0
         var index = 0
@@ -396,7 +404,7 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
         let octave = Int(log2f(pitch / frequency))
         data.state.currNoteNameWithSharps = "\(data.state.noteNamesWithSharps[index])\(octave)"
         data.state.currNoteNameWithFlats = "\(data.state.noteNamesWithFlats[index])\(octave)"
-        print("NOTE WITH FLATS: ", data.state.currNoteNameWithFlats)
+//        print("NOTE WITH FLATS: ", data.state.currNoteNameWithFlats)
     }
     
 //    func convertOutOfBounds(val: Float) -> Float {
