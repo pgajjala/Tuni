@@ -371,51 +371,52 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
     
     func update(_ pitch: AUValue, _ amp: AUValue) {
         // Reduces sensitivity to background noise to prevent random / fluctuating data.
-        guard amp > 0.1 else {
+        guard amp > 0.3 else {
             data.state.frequency = -1
             data.state.currNoteNameWithSharps = "-"
             data.state.currNoteNameWithFlats = "-"
             return
         }
-
-        data.state.pitch = pitch
-        data.state.amplitude = amp
-
-        var frequency = pitch
-        while frequency > Float(noteFrequencies[noteFrequencies.count - 1]) {
-            frequency /= 2.0
-        }
-        while frequency < Float(noteFrequencies[0]) {
-            frequency *= 2.0
-        }
-        data.state.frequency = frequency
-        
-        if (data.state.desiredTone < 17.32 && data.state.frequency > 29.14) {
-            data.state.frequency /= 2.0
-        } else if (data.state.desiredTone > 29.14 && data.state.frequency < 17.32) {
-            data.state.frequency *= 2.0
-        }
-       
-        
-//        print("FREQUENCY: ", data.state.frequency)
-//        print("PITCH: ", data.state.pitch)
-//        print("DESIRED TICK: ", data.state.desiredTick)
-//        print("DESIRED TONE: ", data.state.desiredTone)
-
-        var minDistance: Float = 10000.0
-        var index = 0
-
-        for possibleIndex in 0 ..< noteFrequencies.count {
-            let distance = fabsf(Float(noteFrequencies[possibleIndex]) - frequency)
-            if distance < minDistance {
-                index = possibleIndex
-                minDistance = distance
+        if (data.state.pitch > pitch + 0.1 || data.state.pitch < pitch - 0.1) {
+            data.state.pitch = pitch
+            data.state.amplitude = amp
+            
+            var frequency = pitch
+            while frequency > Float(noteFrequencies[noteFrequencies.count - 1]) {
+                frequency /= 2.0
             }
+            while frequency < Float(noteFrequencies[0]) {
+                frequency *= 2.0
+            }
+            data.state.frequency = frequency
+            
+            if (data.state.desiredTone < 17.32 && data.state.frequency > 29.14) {
+                data.state.frequency /= 2.0
+            } else if (data.state.desiredTone > 29.14 && data.state.frequency < 17.32) {
+                data.state.frequency *= 2.0
+            }
+            
+            
+                    print("FREQUENCY: ", data.state.frequency)
+            //        print("PITCH: ", data.state.pitch)
+            //        print("DESIRED TICK: ", data.state.desiredTick)
+            //        print("DESIRED TONE: ", data.state.desiredTone)
+            
+            var minDistance: Float = 10000.0
+            var index = 0
+            
+            for possibleIndex in 0 ..< noteFrequencies.count {
+                let distance = fabsf(Float(noteFrequencies[possibleIndex]) - frequency)
+                if distance < minDistance {
+                    index = possibleIndex
+                    minDistance = distance
+                }
+            }
+            let octave = Int(log2f(pitch / frequency))
+            data.state.currNoteNameWithSharps = "\(data.state.noteNamesWithSharps[index])\(octave)"
+            data.state.currNoteNameWithFlats = "\(data.state.noteNamesWithFlats[index])\(octave)"
+            //        print("NOTE WITH FLATS: ", data.state.currNoteNameWithFlats)
         }
-        let octave = Int(log2f(pitch / frequency))
-        data.state.currNoteNameWithSharps = "\(data.state.noteNamesWithSharps[index])\(octave)"
-        data.state.currNoteNameWithFlats = "\(data.state.noteNamesWithFlats[index])\(octave)"
-//        print("NOTE WITH FLATS: ", data.state.currNoteNameWithFlats)
     }
     
 //    func convertOutOfBounds(val: Float) -> Float {
