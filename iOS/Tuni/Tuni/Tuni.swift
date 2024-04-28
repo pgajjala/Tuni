@@ -108,7 +108,9 @@ extension Tuni {
     
     private func writeDesired() {
         if let desiredCharacteristic = desiredCharacteristic {
-            var desiredChar = state.desiredTick / 11 // times?
+            print("desired tick", state.desiredTick)
+            var desiredChar = UInt8(state.desiredTick / 11 * 255) // times?
+            print("desired char", desiredChar)
             let data = Data(bytes: &desiredChar, count: 1)
             tuniPeripheral?.writeValue(data, for: desiredCharacteristic, type: .withResponse)
         }
@@ -116,7 +118,15 @@ extension Tuni {
     
     private func writeCurrent() {
         if let currentCharacteristic = currentCharacteristic {
-            var currentChar = (state.NOTE_RATIO * state.frequency - state.desiredTone) / (state.desiredTone * (pow(2, state.NOTE_RATIO) - 1))// CONVERT
+            var val: Float = state.frequency
+            if (state.frequency <= state.desiredTone / state.NOTE_RATIO) {
+                val = state.desiredTone/state.NOTE_RATIO
+            } else if (state.frequency >= state.desiredTone * state.NOTE_RATIO) {
+                val = state.desiredTone * state.NOTE_RATIO
+            }
+            var convert = (val - (state.desiredTone/state.NOTE_RATIO))/(state.desiredTone*state.NOTE_RATIO - state.desiredTone/state.NOTE_RATIO)
+            print("convert", convert)
+            var currentChar = UInt8(convert*255)// backwards?
             let data = Data(bytes: &currentChar, count: 1)
             tuniPeripheral?.writeValue(data, for: currentCharacteristic, type: .withResponse)
         }
@@ -192,7 +202,6 @@ extension Tuni: CBCentralManagerDelegate {
     }
 
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        print("Found peripheral \(peripheral.name)")
         if peripheral.name == name {
             print("Found \(name)")
 
@@ -270,7 +279,8 @@ extension Tuni: CBPeripheralDelegate {
               !updatedValue.isEmpty else { return }
 
         switch characteristic.uuid {
-//        case Tuni.CURRENT_UUID:
+        case Tuni.CURRENT_UUID:
+            break
 //            var newState = state
 //
 //            let current = parseHSV(for: updatedValue) //change this lol
@@ -303,7 +313,8 @@ extension Tuni: CBPeripheralDelegate {
 //    }
 
     private func parseDesired(for value: Data) -> Float {
-        return Float(value[0] / 11) // divide?
+        print(value[0])
+        return Float(value[0]) * 11.0 / 255.0 // divide?
     }
 }
 
