@@ -7,7 +7,6 @@ import struct
 
 class CurrentNoteCharacteristic(Characteristic):
     def __init__(self, tuni_state: TuniState):
-        print('initting current note characteristic')
         Characteristic.__init__(self, {
             'uuid': '0002A7D3-6486-4761-87D7-B937D41781A2',
             'properties': ['write', 'notify'],
@@ -30,13 +29,10 @@ class CurrentNoteCharacteristic(Characteristic):
                 })
             ]
         })
-        print('inited characteristic')
         self.updateValueCallback = None
 
         self.tuni_state = tuni_state
-        print('set tuni state')
         self.tuni_state.on('currentChange', self.handle_current_change)
-        print('handle change')
 
 # region BLE Read/Write
     # def onReadRequest(self, offset, callback):
@@ -54,12 +50,12 @@ class CurrentNoteCharacteristic(Characteristic):
             callback(Characteristic.RESULT_INVALID_ATTRIBUTE_LENGTH)
         else:
             new_current = data[0] / 0xff
-            print(f'New current: {new_current}')
+            # print(f'New current: {new_current}')
             self.tuni_state.current = new_current
             callback(Characteristic.RESULT_SUCCESS)
 
     def handle_current_change(self, newValue):
-        print(f"Handling current change: {newValue}")
+        # print(f"Handling current change: {newValue}")
         if self.updateValueCallback:
             data = struct.pack("<B",
                                int(self.tuni_state.current * 0xff))

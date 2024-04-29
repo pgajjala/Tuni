@@ -7,7 +7,6 @@ import struct
 
 class DesiredCharacteristic(Characteristic):
     def __init__(self, tuni_state: TuniState):
-        print('initting desired note characteristic')
 
         Characteristic.__init__(self, {
             'uuid': '0003A7D3-6486-4761-87D7-B937D41781A2',
@@ -44,6 +43,7 @@ class DesiredCharacteristic(Characteristic):
         else:
             data = struct.pack("<B",
                                int(self.tuni_state.desired * 0xff))
+            print("Reading:",data)
             callback(Characteristic.RESULT_SUCCESS, data)
 
     def onWriteRequest(self, data, offset, withoutResponse, callback):
@@ -52,6 +52,7 @@ class DesiredCharacteristic(Characteristic):
         elif len(data) != 1:
             callback(Characteristic.RESULT_INVALID_ATTRIBUTE_LENGTH)
         else:
+            print("Writing:", data)
             new_desired = data[0] / 0xff
             print(f'New desired: {new_desired}')
             self.tuni_state.desired = new_desired
