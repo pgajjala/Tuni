@@ -108,9 +108,9 @@ extension Tuni {
     
     private func writeDesired() {
         if let desiredCharacteristic = desiredCharacteristic {
-            print("desired tick", state.desiredTick)
+//            print("desired tick", state.desiredTick)
             var desiredChar = UInt8(state.desiredTick / 11 * 255) // times?
-            print("desired char", desiredChar)
+//            print("desired char", desiredChar)
             let data = Data(bytes: &desiredChar, count: 1)
             tuniPeripheral?.writeValue(data, for: desiredCharacteristic, type: .withResponse)
         }
@@ -118,17 +118,20 @@ extension Tuni {
     
     private func writeCurrent() {
         if let currentCharacteristic = currentCharacteristic {
-            var val: Float = state.frequency
-            if (state.frequency <= state.desiredTone / state.NOTE_RATIO) {
-                val = state.desiredTone/state.NOTE_RATIO
-            } else if (state.frequency >= state.desiredTone * state.NOTE_RATIO) {
-                val = state.desiredTone * state.NOTE_RATIO
+            if (state.frequency < state.lastFrequency - 0.1 || state.frequency > state.lastFrequency + 0.1) {
+                state.lastFrequency = state.frequency
+                var val: Float = state.frequency
+                if (state.frequency <= state.desiredTone / state.NOTE_RATIO) {
+                    val = state.desiredTone/state.NOTE_RATIO
+                } else if (state.frequency >= state.desiredTone * state.NOTE_RATIO) {
+                    val = state.desiredTone * state.NOTE_RATIO
+                }
+                var convert = (val - (state.desiredTone/state.NOTE_RATIO))/(state.desiredTone*state.NOTE_RATIO - state.desiredTone/state.NOTE_RATIO)
+                
+                var currentChar = UInt8(convert*255)// backwards?
+                let data = Data(bytes: &currentChar, count: 1)
+                tuniPeripheral?.writeValue(data, for: currentCharacteristic, type: .withResponse)
             }
-            var convert = (val - (state.desiredTone/state.NOTE_RATIO))/(state.desiredTone*state.NOTE_RATIO - state.desiredTone/state.NOTE_RATIO)
-            print("convert", convert)
-            var currentChar = UInt8(convert*255)// backwards?
-            let data = Data(bytes: &currentChar, count: 1)
-            tuniPeripheral?.writeValue(data, for: currentCharacteristic, type: .withResponse)
         }
     }
     
@@ -139,23 +142,6 @@ extension Tuni {
         }
     }
     
-//    private func writeHSV() {
-//        if let hsvCharacteristic = hsvCharacteristic {
-//            var hsv: UInt32 = 0
-//            let hueInt = UInt32(state.hue * 255.0)
-//            let satInt = UInt32(state.saturation * 255.0)
-//            let valueInt = UInt32(255)
-//
-//            hsv = hueInt
-//            hsv += satInt << 8
-//            hsv += valueInt << 16
-//
-//            let data = Data(bytes: &hsv, count: 3)
-//            tuniPeripheral?.writeValue(data, for: hsvCharacteristic, type: .withResponse)
-//        }
-//    }
-//
-    
 }
 
 
@@ -165,6 +151,7 @@ extension Tuni {
         var isOn = false
         var pitch: Float = 0.0
         var frequency: Float = 0.0
+        var lastFrequency: Float = 0.0
         var amplitude: Float = 0.0
         var currNoteNameWithSharps = "-"
         var currNoteNameWithFlats = "-"
@@ -363,7 +350,10 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
 
         tracker = PitchTap(mic) { pitch, amp in
             DispatchQueue.main.async {
-                self.update(pitch[0], amp[0])
+                if (self.data.state.isOn) {
+                    self.update(pitch[0], amp[0])
+                }
+               
             }
         }
         tracker.start()
@@ -371,52 +361,52 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
     
     func update(_ pitch: AUValue, _ amp: AUValue) {
         // Reduces sensitivity to background noise to prevent random / fluctuating data.
-        guard amp > 0.3 else {
-            data.state.frequency = -1
+        guard amp > 0.2 else {
+            if (data.state.frequency != -1) {
+                data.state.frequency = -1
+            }
             data.state.currNoteNameWithSharps = "-"
             data.state.currNoteNameWithFlats = "-"
             return
         }
-        if (data.state.pitch > pitch + 0.1 || data.state.pitch < pitch - 0.1) {
-            data.state.pitch = pitch
-            data.state.amplitude = amp
-            
-            var frequency = pitch
-            while frequency > Float(noteFrequencies[noteFrequencies.count - 1]) {
-                frequency /= 2.0
-            }
-            while frequency < Float(noteFrequencies[0]) {
-                frequency *= 2.0
-            }
-            data.state.frequency = frequency
-            
-            if (data.state.desiredTone < 17.32 && data.state.frequency > 29.14) {
-                data.state.frequency /= 2.0
-            } else if (data.state.desiredTone > 29.14 && data.state.frequency < 17.32) {
-                data.state.frequency *= 2.0
-            }
-            
-            
-                    print("FREQUENCY: ", data.state.frequency)
-            //        print("PITCH: ", data.state.pitch)
-            //        print("DESIRED TICK: ", data.state.desiredTick)
-            //        print("DESIRED TONE: ", data.state.desiredTone)
-            
-            var minDistance: Float = 10000.0
-            var index = 0
-            
-            for possibleIndex in 0 ..< noteFrequencies.count {
-                let distance = fabsf(Float(noteFrequencies[possibleIndex]) - frequency)
-                if distance < minDistance {
-                    index = possibleIndex
-                    minDistance = distance
-                }
-            }
-            let octave = Int(log2f(pitch / frequency))
-            data.state.currNoteNameWithSharps = "\(data.state.noteNamesWithSharps[index])\(octave)"
-            data.state.currNoteNameWithFlats = "\(data.state.noteNamesWithFlats[index])\(octave)"
-            //        print("NOTE WITH FLATS: ", data.state.currNoteNameWithFlats)
+        data.state.pitch = pitch
+        data.state.amplitude = amp
+        
+        var frequency = pitch
+        while frequency > Float(noteFrequencies[noteFrequencies.count - 1]) {
+            frequency /= 2.0
         }
+        while frequency < Float(noteFrequencies[0]) {
+            frequency *= 2.0
+        }
+        data.state.frequency = frequency
+        
+        if (data.state.desiredTone < 17.32 && data.state.frequency > 29.14) {
+            data.state.frequency /= 2.0
+        } else if (data.state.desiredTone > 29.14 && data.state.frequency < 17.32) {
+            data.state.frequency *= 2.0
+        }
+        
+        
+//                print("FREQUENCY: ", data.state.frequency)
+        //        print("PITCH: ", data.state.pitch)
+        //        print("DESIRED TICK: ", data.state.desiredTick)
+        //        print("DESIRED TONE: ", data.state.desiredTone)
+        
+        var minDistance: Float = 10000.0
+        var index = 0
+        
+        for possibleIndex in 0 ..< noteFrequencies.count {
+            let distance = fabsf(Float(noteFrequencies[possibleIndex]) - frequency)
+            if distance < minDistance {
+                index = possibleIndex
+                minDistance = distance
+            }
+        }
+        let octave = Int(log2f(pitch / frequency))
+        data.state.currNoteNameWithSharps = "\(data.state.noteNamesWithSharps[index])\(octave)"
+        data.state.currNoteNameWithFlats = "\(data.state.noteNamesWithFlats[index])\(octave)"
+        //        print("NOTE WITH FLATS: ", data.state.currNoteNameWithFlats)
     }
     
 //    func convertOutOfBounds(val: Float) -> Float {
