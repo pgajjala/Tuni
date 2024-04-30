@@ -99,31 +99,6 @@ class TuniState():
         if newSharps != self.sharps:
             self._sharps = newSharps
             self.publish_state_change()
-        
-    # def setCurrentNote(self, newCurrentNote):
-    #     publish_state_change = False
-    #     if newCurrentNote != self._current:
-    #         self._current = newCurrentNote
-    #         publish_state_change = True
-
-    #     if publish_state_change:
-    #         self.publish_state_change()
-
-
-    # def setCurrentNote(self, newDesiredNote):
-    #     publish_state_change = False
-    #     if newDesiredNote != self._current:
-    #         self._desired = newDesiredNote
-    #         publish_state_change = True
-
-    #     if publish_state_change:
-    #         self.publish_state_change()
-
-    # @brightness.setter
-    # def brightness(self, newBrightness):
-    #     if newBrightness != self.brightness:
-    #         self._brightness = newBrightness
-    #         self.publish_state_change()
 
     def on_mqtt_connect(self, client, userdata, flags, rc):
         self.mqtt.publish(client_state_topic(MQTT_CLIENT_ID), b"1",
@@ -156,25 +131,7 @@ class TuniState():
                 self._sharps = new_state.get('sharps', False)
                 self.emit('sharpsChange', self.sharps)
 
-            # emit_color_change = False
-            # new_color = new_state.get('color', {})
-            # if new_color.get('h', 0) != self._hue:
-            #     self._hue = new_color.get('h', 0)
-            #     emit_color_change = True
-
-            # if new_color.get('s', 0) != self._saturation:
-            #     self._saturation = new_color.get('s', 0)
-            #     emit_color_change = True
-
-            # if emit_color_change:
-            #     self.emit('hsvChange', new_color)
-
-            # if new_state.get('brightness', 0) != self._brightness:
-            #     self.brightness = new_state.get('brightness', 0)
-            #     self.emit('brightnessChange', self.brightness)
-
     def publish_state_change(self):
-
         config = {
             'current': self.current,
             'desired': self.desired,
