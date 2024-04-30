@@ -14,87 +14,10 @@
             filePath = "Tuni/Tuni.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "318"
-            endingLineNumber = "318"
-            landmarkName = "TunerConductor"
-            landmarkType = "3">
-            <Locations>
-               <Location
-                  uuid = "093FAAF0-F2AB-425D-882D-FD4B9F63FF3B - 9a879119d7ea972"
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tuni.TunerConductor.tracker.getter : Swift.Optional&lt;SoundpipeAudioKit.PitchTap&gt;"
-                  moduleName = "Tuni"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/prart/Library/CloudStorage/OneDrive-Personal/Documents/2024Spring/connected-devices/Tuni/iOS/Tuni/Tuni/Tuni.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "16">
-               </Location>
-               <Location
-                  uuid = "093FAAF0-F2AB-425D-882D-FD4B9F63FF3B - d38b4c3b780b587c"
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tuni.TunerConductor.tracker.setter : Swift.Optional&lt;SoundpipeAudioKit.PitchTap&gt;"
-                  moduleName = "Tuni"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/prart/Library/CloudStorage/OneDrive-Personal/Documents/2024Spring/connected-devices/Tuni/iOS/Tuni/Tuni/Tuni.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "318"
-                  endingLineNumber = "318"
-                  offsetFromSymbolStart = "0">
-               </Location>
-               <Location
-                  uuid = "093FAAF0-F2AB-425D-882D-FD4B9F63FF3B - 63564ca12fac860d"
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tuni.TunerConductor.tracker.modify : Swift.Optional&lt;SoundpipeAudioKit.PitchTap&gt;"
-                  moduleName = "Tuni"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/prart/Library/CloudStorage/OneDrive-Personal/Documents/2024Spring/connected-devices/Tuni/iOS/Tuni/Tuni/Tuni.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "318"
-                  endingLineNumber = "318"
-                  offsetFromSymbolStart = "0">
-               </Location>
-               <Location
-                  uuid = "093FAAF0-F2AB-425D-882D-FD4B9F63FF3B - a85c9feb326a1d46"
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tuni.TunerConductor.tracker.modify : Swift.Optional&lt;SoundpipeAudioKit.PitchTap&gt; with unmangled suffix &quot;.resume.0&quot;"
-                  moduleName = "Tuni"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/prart/Library/CloudStorage/OneDrive-Personal/Documents/2024Spring/connected-devices/Tuni/iOS/Tuni/%3Ccompiler-generated%3E"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "16">
-               </Location>
-               <Location
-                  uuid = "093FAAF0-F2AB-425D-882D-FD4B9F63FF3B - 7d8fa76e3075e719"
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Tuni.TunerConductor.init() -&gt; Tuni.TunerConductor"
-                  moduleName = "Tuni"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/prart/Library/CloudStorage/OneDrive-Personal/Documents/2024Spring/connected-devices/Tuni/iOS/Tuni/Tuni/Tuni.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "318"
-                  endingLineNumber = "318"
-                  offsetFromSymbolStart = "832">
-               </Location>
-            </Locations>
+            startingLineNumber = "340"
+            endingLineNumber = "340"
+            landmarkName = "init()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

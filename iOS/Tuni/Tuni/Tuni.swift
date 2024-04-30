@@ -45,6 +45,7 @@ import SwiftUI
     private var desiredCharacteristic: CBCharacteristic?
     private var onOffCharacteristic: CBCharacteristic?
     private var sharpsCharacteristic: CBCharacteristic?
+    private var disabledCharacteristic: CBCharacteristic?
 
     // MARK: State Tracking
     private var skipNextDeviceUpdate = false
@@ -78,11 +79,12 @@ extension Tuni {
     static let DESIRED_UUID = CBUUID(string: "0003A7D3-6486-4761-87D7-B937D41781A2")
     static let ON_OFF_UUID = CBUUID(string: "0004A7D3-6486-4761-87D7-B937D41781A2")
     static let SHARPS_UUID = CBUUID(string: "0005A7D3-6486-4761-87D7-B937D41781A2")
-
+    static let DISABLED_UUID = CBUUID(string: "0006A7D3-6486-4761-87D7-B937D41781A2")
+    
     private var shouldSkipUpdateDevice: Bool {
         return skipNextDeviceUpdate || pendingBluetoothUpdate
     }
-
+    
     private func updateDevice(force: Bool = false) {
         if state.isConnected && (force || !shouldSkipUpdateDevice) {
             pendingBluetoothUpdate = true
@@ -91,14 +93,14 @@ extension Tuni {
                 self?.writeDesired()
                 self?.writeCurrent()
                 self?.writeSharps()
-
+                
                 self?.pendingBluetoothUpdate = false
             }
         }
-
+        
         skipNextDeviceUpdate = false
     }
-
+    
     private func writeOnOff() {
         if let onOffCharacteristic = onOffCharacteristic {
             let data = Data(bytes: &state.isOn, count: 1)
@@ -106,11 +108,17 @@ extension Tuni {
         }
     }
     
+    private func writeDisabled(isDisabled: Bool) {
+        var d = isDisabled
+        if let disabledCharacteristic = disabledCharacteristic {
+            let data = Data(bytes: &d, count: 1)
+            tuniPeripheral?.writeValue(data, for: disabledCharacteristic, type: .withResponse)
+        }
+    }
+    
     private func writeDesired() {
         if let desiredCharacteristic = desiredCharacteristic {
-//            print("desired tick", state.desiredTick)
             var desiredChar = UInt8(state.desiredTick / 11 * 255) // times?
-//            print("desired char", desiredChar)
             let data = Data(bytes: &desiredChar, count: 1)
             tuniPeripheral?.writeValue(data, for: desiredCharacteristic, type: .withResponse)
         }
@@ -131,6 +139,11 @@ extension Tuni {
                 var currentChar = UInt8(convert*255)// backwards?
                 let data = Data(bytes: &currentChar, count: 1)
                 tuniPeripheral?.writeValue(data, for: currentCharacteristic, type: .withResponse)
+                if (state.frequency == -1) {
+                    writeDisabled(isDisabled: true)
+                } else {
+                    writeDisabled(isDisabled: false)
+                }
             }
         }
     }
@@ -246,6 +259,11 @@ extension Tuni: CBPeripheralDelegate {
                 self.sharpsCharacteristic = characteristic
                 peripheral.readValue(for: characteristic)
                 peripheral.setNotifyValue(true, for: characteristic)
+                
+            case Tuni.DISABLED_UUID:
+                self.disabledCharacteristic = characteristic
+                peripheral.readValue(for: characteristic)
+                peripheral.setNotifyValue(true, for: characteristic)
 
             default:
                 continue
@@ -253,7 +271,8 @@ extension Tuni: CBPeripheralDelegate {
         }
 
         // not connected until all characteristics are discovered
-        if self.currentCharacteristic != nil && self.desiredCharacteristic != nil && self.onOffCharacteristic != nil && self.sharpsCharacteristic != nil {
+        if self.currentCharacteristic != nil && self.desiredCharacteristic != nil && self.onOffCharacteristic != nil && self.sharpsCharacteristic != nil && self.disabledCharacteristic != nil {
+            print("All characteristics discovered")
             skipNextDeviceUpdate = true
             state.isConnected = true
         }
@@ -267,6 +286,9 @@ extension Tuni: CBPeripheralDelegate {
 
         switch characteristic.uuid {
         case Tuni.CURRENT_UUID:
+            break
+            
+        case Tuni.DISABLED_UUID:
             break
             
         case Tuni.DESIRED_UUID:
