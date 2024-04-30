@@ -23,6 +23,7 @@ class TuniApp(App):
     _desired = NumericProperty()
     tuni_is_on = BooleanProperty()
     checkbox_state = BooleanProperty()
+    disabled = BooleanProperty()
 
     # hue is now current note
     def _get_current_note(self):
@@ -98,6 +99,13 @@ class TuniApp(App):
         if self._publish_clock is None:
             self._publish_clock = Clock.schedule_once(
                 lambda dt: self._update_leds(), 0.01)
+    
+    def on_disabled(self, instance, value):
+        if self._updatingUI:
+            return
+        if self._publish_clock is None:
+            self._publish_clock = Clock.schedule_once(
+                lambda dt: self._update_leds(), 0.01)
 
     def on_connect(self, client, userdata, flags, rc):
         self.mqtt.publish(client_state_topic(MQTT_CLIENT_ID), b"1",
@@ -140,7 +148,8 @@ class TuniApp(App):
                 desired_slider = self.root.ids.desired_slider
                 desired_slider.checkbox_state = new_state['sharps']
                 desired_slider.draw_tick_marks()
-                
+            if 'disabled' in new_state:
+                self.disabled = new_state['disabled']
                 
             # print("current slider value:", self.current_note)
         finally:
@@ -153,6 +162,7 @@ class TuniApp(App):
                'desired': self._desired,
                'on': self.tuni_is_on,
                'sharps': self.checkbox_state,
+               'disabled': self.disabled,
                'client': MQTT_CLIENT_ID}
         self.mqtt.publish(TOPIC_SET_LAMP_CONFIG,
                           json.dumps(msg).encode('utf-8'),

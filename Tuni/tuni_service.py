@@ -65,6 +65,8 @@ class TuniService(object):
             self.db['sharps'] = False
         if 'client' not in self.db:
             self.db['client'] = ''
+        if 'disabled' not in self.db:
+            self.db['disabled'] = ''
         self.write_current_settings_to_hardware()
 
     def _create_and_configure_broker_client(self):
@@ -123,6 +125,8 @@ class TuniService(object):
                 self.set_current_desired(new_config['desired'])
             if 'sharps' in new_config:
                     self.set_current_sharps(new_config['sharps'])
+            if 'disabled' in new_config:
+                    self.set_current_disabled(new_config['disabled'])
             self.publish_config_change()
         except InvalidTuniConfig:
             print("error applying new settings " + str(msg.payload))
@@ -132,6 +136,7 @@ class TuniService(object):
                   'desired': self.get_current_desired(),
                   'on': self.get_current_onoff(),
                   'sharps': self.get_current_sharps(),
+                  'disabled': self.get_current_disabled(),
                   'client': self.get_last_client()}
         self._client.publish(TOPIC_LAMP_CHANGE_NOTIFICATION,
                              json.dumps(config).encode('utf-8'), qos=1,
@@ -169,6 +174,15 @@ class TuniService(object):
             raise InvalidTuniConfig()
         self.db['on'] = new_onoff
         self.write_current_settings_to_hardware()
+    
+    def get_current_disabled(self):
+        return self.db['disabled']
+
+    def set_current_disabled(self, new_disabled):
+        if new_disabled not in [True, False]:
+            raise InvalidTuniConfig()
+        self.db['disabled'] = new_disabled
+        self.write_current_settings_to_hardware()
 
     def get_current_current(self):
         return self.db['current']
@@ -184,11 +198,12 @@ class TuniService(object):
         desired = self.get_current_desired()
         current = self.get_current_current()
         sharps = self.get_current_sharps()
+        disabled = self.get_current_disabled()
         
         #set sharps box to chekced
         
 
-        r, g, b = self.calculate_rgb(desired, current, onoff)
+        r, g, b = self.calculate_rgb(desired, current, onoff, disabled)
         self.lamp_driver.change_color(r, g, b)
         self.db.sync()
 
@@ -203,7 +218,7 @@ class TuniService(object):
         # Convert the 0-1 range into a value in the right range.
         return rightMin + (valueScaled * rightSpan)
 
-    def calculate_rgb(self, desired, current, is_on):
+    def calculate_rgb(self, desired, current, is_on, disabled):
         pwm = float(PWM_RANGE)
         r, g, b = 0.0, 0.0, 0.0
         hue = 0.0
@@ -218,7 +233,7 @@ class TuniService(object):
         # else:
         hue = self.translate(current, 0, 1, 0, 2/3)
 
-        if is_on:
+        if is_on and disabled:
             rgb = colorsys.hsv_to_rgb(hue, 1.0, 1.0)
             r, g, b = tuple(channel * pwm * 1.0
                             for channel in rgb)

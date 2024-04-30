@@ -27,6 +27,7 @@ class TuniState():
         self._current = 0
         self._desired = 0
         self._sharps = False
+        self._disabled = False
 
         self.got_initial_state = False
 
@@ -75,6 +76,10 @@ class TuniState():
     @property
     def sharps(self):
         return self._sharps
+    
+    @property
+    def disabled(self):
+        return self._disabled
 
     @isOn.setter
     def isOn(self, newIsOn):
@@ -98,6 +103,12 @@ class TuniState():
     def sharps(self, newSharps):
         if newSharps != self.sharps:
             self._sharps = newSharps
+            self.publish_state_change()
+            
+    @disabled.setter
+    def disabled(self, newDisabled):
+        if newDisabled != self.disabled:
+            self._disabled = newDisabled
             self.publish_state_change()
 
     def on_mqtt_connect(self, client, userdata, flags, rc):
@@ -130,6 +141,10 @@ class TuniState():
             if new_state.get('sharps', False) != self._sharps:
                 self._sharps = new_state.get('sharps', False)
                 self.emit('sharpsChange', self.sharps)
+            
+            if new_state.get('disabled', False) != self._disabled:
+                self._disabled = new_state.get('disabled', False)
+                self.emit('disabledChange', self.disabled)
 
     def publish_state_change(self):
         config = {
@@ -137,6 +152,7 @@ class TuniState():
             'desired': self.desired,
             'on': self.isOn,
             'sharps': self.sharps,
+            'disabled': self.disabled,
             'client': MQTT_CLIENT_ID}
         print(f"Publishing new state: {config}")
         self.mqtt.publish(TOPIC_SET_LAMP_CONFIG,

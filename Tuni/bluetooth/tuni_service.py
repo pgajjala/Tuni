@@ -3,6 +3,7 @@ from on_off_characteristic import OnOffCharacteristic
 from current_note_characteristic import CurrentNoteCharacteristic
 from desired_characteristic import DesiredCharacteristic
 from sharps_characteristic import SharpsCharacteristic
+from disabled_characteristic import DisabledCharacteristic
 from tuni_state import TuniState
 
 class TuniService(BlenoPrimaryService):
@@ -19,7 +20,8 @@ class TuniService(BlenoPrimaryService):
                 CurrentNoteCharacteristic(self.tuni_state),
                 DesiredCharacteristic(self.tuni_state),
                 OnOffCharacteristic(self.tuni_state),
-                SharpsCharacteristic(self.tuni_state)
+                SharpsCharacteristic(self.tuni_state),
+                DisabledCharacteristic(self.tuni_state)
             ]
         })
         print("Started Tuni Service")
