@@ -268,14 +268,7 @@ extension Tuni: CBPeripheralDelegate {
         switch characteristic.uuid {
         case Tuni.CURRENT_UUID:
             break
-//            var newState = state
-//
-//            let current = parseHSV(for: updatedValue) //change this lol
-//            newState.hue = hsv.hue
-//            newState.saturation = hsv.saturation
-//
-//            state = newState
-
+            
         case Tuni.DESIRED_UUID:
             state.desiredTick = parseDesired(for: updatedValue)
 
@@ -293,11 +286,6 @@ extension Tuni: CBPeripheralDelegate {
     private func parseBool(for value: Data) -> Bool {
         return value.first == 1
     }
-
-//    private func parseHSV(for value: Data) -> (hue: Double, saturation: Double) {
-//        return (hue: Double(value[0]) / 255.0,
-//                saturation: Double(value[1]) / 255.0)
-//    }
 
     private func parseDesired(for value: Data) -> Float {
         print(value[0])
@@ -408,15 +396,4 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
         data.state.currNoteNameWithFlats = "\(data.state.noteNamesWithFlats[index])\(octave)"
         //        print("NOTE WITH FLATS: ", data.state.currNoteNameWithFlats)
     }
-    
-//    func convertOutOfBounds(val: Float) -> Float {
-//        var toRet: Float = val
-//        if val > highB {
-//            toRet = lowB + (val - highB)/(highC - highB) * (lowC - lowB)
-//        }
-//        else if (val < lowC) {
-//            toRet = highB + (lowC - val)/(lowC - lowB) * (highC - highB)
-//        }
-//        return toRet
-//    }
 }
