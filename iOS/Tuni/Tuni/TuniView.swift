@@ -53,10 +53,10 @@ struct TuniView: View {
             
             HStack{
                 ForEach(0..<11) { i in
-                    Text(tuniConductor.data.state.currNoteNames[i])
+                    Text(tuni.state.currNoteNames[i])
                         .frame(width: 22)
                 }
-                Text(tuniConductor.data.state.currNoteNames[11])
+                Text(tuni.state.currNoteNames[11])
                     .frame(width: 25)
             }.frame(width: 360)
             
@@ -119,21 +119,3 @@ func getDesiredToneString(tone: Float, frequencies: [Float], noteNames: [String]
     }
     return String(format: "%.2f", tone)
 }
-
-
-//func convertOutOfBounds(val: Float) -> Float {
-//    print("convert out of bounds", val)
-//    var toRet: Float = val
-//    if val > highB {
-//        toRet = lowB + (val - highB)/(highC - highB) * (lowC - lowB)
-//    }
-//    else if (val < lowC) {
-//        toRet = highB + (lowC - val)/(lowC - lowB) * (highC - highB)
-//    }
-//    print("converted to", toRet)
-//    return toRet
-//}
-
-//#Preview {
-//    TuniView()
-//}

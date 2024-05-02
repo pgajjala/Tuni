@@ -298,7 +298,7 @@ extension Tuni: CBPeripheralDelegate {
             state.isOn = parseBool(for: updatedValue)
             
         case Tuni.SHARPS_UUID:
-            state.isOn = parseBool(for: updatedValue)
+            state.namesInSharps = parseBool(for: updatedValue)
         
         default:
             print("Unhandled Characteristic UUID: \(characteristic.uuid)")
@@ -396,12 +396,6 @@ class TunerConductor: NSObject, ObservableObject, HasAudioEngine {
         } else if (data.state.desiredTone > 29.14 && data.state.frequency < 17.32) {
             data.state.frequency *= 2.0
         }
-        
-        
-//                print("FREQUENCY: ", data.state.frequency)
-        //        print("PITCH: ", data.state.pitch)
-        //        print("DESIRED TICK: ", data.state.desiredTick)
-        //        print("DESIRED TONE: ", data.state.desiredTone)
         
         var minDistance: Float = 10000.0
         var index = 0
