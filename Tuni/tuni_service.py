@@ -208,7 +208,7 @@ class TuniService(object):
         self.db.sync()
 
     def translate(self, value, leftMin, leftMax, rightMin, rightMax):
-        # Figure out how 'wide' each range is
+        # Fssigure out how 'wide' each range is
         leftSpan = leftMax - leftMin
         rightSpan = rightMax - rightMin
 
@@ -233,7 +233,7 @@ class TuniService(object):
         # else:
         hue = self.translate(current, 0, 1, 0, 2/3)
 
-        if is_on and disabled:
+        if is_on and not disabled:
             rgb = colorsys.hsv_to_rgb(hue, 1.0, 1.0)
             r, g, b = tuple(channel * pwm * 1.0
                             for channel in rgb)
